@@ -5,6 +5,8 @@ import os
 import requests
 import zipfile
 from datetime import datetime
+from utils.manifest import update_manifest
+
 
 # Configuration
 RESULTS_URL = "https://s3.amazonaws.com/dl.ncsbe.gov/ENRS/2024_11_05/results_pct_20241105.zip"
@@ -37,6 +39,10 @@ def main():
     extract_zip(zip_path, OUTPUT_DIR)
 
     print("Election results data setup complete.")
+
+    update_manifest(zip_filename, RESULTS_URL)   # or RESULTS_URL
+
+    print("Manifest Updated.")
 
 
 if __name__ == "__main__":

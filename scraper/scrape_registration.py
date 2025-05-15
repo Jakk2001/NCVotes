@@ -5,6 +5,8 @@ import os
 import requests
 import zipfile
 from datetime import datetime
+from utils.manifest import update_manifest
+
 
 # Configuration
 DATA_URL = "https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvoter_Statewide.zip"
@@ -39,6 +41,10 @@ def main():
     extract_zip(zip_path, OUTPUT_DIR)
 
     print("Registration data setup complete.")
+
+    update_manifest(zip_filename, DATA_URL)   # or RESULTS_URL
+
+    print("Manifest Updated.")
 
 
 if __name__ == "__main__":

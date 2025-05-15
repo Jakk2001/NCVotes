@@ -1,0 +1,28 @@
+name: Daily Election Results Scrape (Conditional)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *'  # Daily at 2:00 UTC (10pm ET)
+
+jobs:
+  scrape:
+    if: github.repository == 'your-username/ncvotes' && env.ENABLE_RESULTS == 'true'
+    runs-on: ubuntu-latest
+    env:
+      ENABLE_RESULTS: ${{ secrets.ENABLE_RESULTS }}  # Set to 'true' or 'false'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - run: pip install requests
+      - run: python scraper/scrape_results.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/raw/manifest.json
+          git commit -m "update results manifest" || echo "No changes"
+      - uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
