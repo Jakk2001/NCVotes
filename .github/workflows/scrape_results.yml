@@ -1,39 +1,37 @@
 name: Daily Election Results Scrape (Conditional)
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: '0 2 * * *'  # Daily at 2:00 UTC (10pm ET)
+    - cron: '0 2 * * *'  # Daily at 2:00 UTC
+  workflow_dispatch:
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
-
+    environment: production
     steps:
+      - name: Check ENABLE_RESULTS secret
+        run: |
+          if [ "${{ secrets.ENABLE_RESULTS }}" != "true" ]; then
+            echo "ENABLE_RESULTS is not true. Skipping run."
+            exit 0
+          fi
+
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
       - run: pip install requests
-
-      - name: Run scraper if ENABLE_RESULTS is true
-        env:
-          ENABLE_RESULTS: ${{ secrets.ENABLE_RESULTS }}
-        run: |
-          if [ "$ENABLE_RESULTS" = "true" ]; then
-            python scraper/scrape_results.py
-          else
-            echo "Election scraper is disabled."
-          fi
-
-      - name: Commit updated manifest (if any)
-        run: |
+      - run: python scraper/scrape_results.py
+      - run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/raw/manifest.json
-          git diff --cached --quiet || git commit -m "update results manifest"
-        continue-on-error: true  # Prevent workflow failure if no changes
-
+          if ! git diff --cached --quiet; then
+            git commit -m "update results manifest"
+          else
+            echo "No changes to commit"
+          fi
       - uses: ad-m/github-push-action@v0.6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
