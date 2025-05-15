@@ -7,22 +7,33 @@ on:
 
 jobs:
   scrape:
-    if: github.repository == 'Jakk2001/ncvotes' && secrets.ENABLE_RESULTS == 'true'
     runs-on: ubuntu-latest
-    env:
-      ENABLE_RESULTS: ${{ secrets.ENABLE_RESULTS }}  # Set to 'true' or 'false'
+
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
       - run: pip install requests
-      - run: python scraper/scrape_results.py
-      - run: |
+
+      - name: Run scraper if ENABLE_RESULTS is true
+        env:
+          ENABLE_RESULTS: ${{ secrets.ENABLE_RESULTS }}
+        run: |
+          if [ "$ENABLE_RESULTS" = "true" ]; then
+            python scraper/scrape_results.py
+          else
+            echo "Election scraper is disabled."
+          fi
+
+      - name: Commit updated manifest (if any)
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/raw/manifest.json
-          git commit -m "update results manifest" || echo "No changes"
+          git diff --cached --quiet || git commit -m "update results manifest"
+        continue-on-error: true  # Prevent workflow failure if no changes
+
       - uses: ad-m/github-push-action@v0.6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
