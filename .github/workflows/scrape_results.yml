@@ -7,7 +7,7 @@ on:
 
 jobs:
   scrape:
-    if: github.repository == 'your-username/ncvotes' && env.ENABLE_RESULTS == 'true'
+    if: github.repository == 'Jakk2001/ncvotes' && secrets.ENABLE_RESULTS == 'true'
     runs-on: ubuntu-latest
     env:
       ENABLE_RESULTS: ${{ secrets.ENABLE_RESULTS }}  # Set to 'true' or 'false'
