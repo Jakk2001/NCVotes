@@ -3,9 +3,11 @@ Download and extract statewide voter registration data from NC S3 archive
 """
 import os
 import requests
+import json
 import zipfile
 from datetime import datetime
 from utils.manifest import update_manifest
+
 
 
 # Configuration
@@ -27,6 +29,26 @@ def extract_zip(zip_path: str, extract_to: str):
     with zipfile.ZipFile(zip_path, 'r') as z:
         z.extractall(extract_to)
 
+def update_manifest(filename, url):
+    manifest_path = os.path.join("data", "raw", "manifest.json")
+    os.makedirs(os.path.dirname(manifest_path), exist_ok=True)  # create dirs if needed
+
+    entry = {
+        "filename": filename,
+        "url": url,
+        "downloaded_at": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    }
+
+    if os.path.exists(manifest_path):
+        with open(manifest_path, "r", encoding="utf-8") as f:
+            manifest = json.load(f)
+    else:
+        manifest = []
+
+    manifest.append(entry)
+
+    with open(manifest_path, "w", encoding="utf-8") as f:
+        json.dump(manifest, f, indent=2)
 
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
