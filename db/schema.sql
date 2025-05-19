@@ -181,6 +181,21 @@ CREATE INDEX idx_registration_date ON registration.voter_registration (registrat
 CREATE INDEX idx_election_date ON elections.election_results (election_date);
 CREATE INDEX idx_candidate_party ON elections.election_results (candidate, party);
 
+CREATE INDEX idx_raw_voters_county ON registration.raw_voters (county_id);
+CREATE INDEX idx_raw_voters_reg_date ON registration.raw_voters (registr_dt);
+CREATE INDEX idx_raw_voters_party ON registration.raw_voters (party_cd);
+CREATE INDEX idx_raw_voters_ncid ON registration.raw_voters (ncid);
+
+CREATE INDEX idx_election_date ON elections.election_results (election_date);
+CREATE INDEX idx_election_county ON elections.election_results (county);
+CREATE INDEX idx_election_candidate ON elections.election_results (candidate);
+CREATE INDEX idx_election_party ON elections.election_results (party);
+CREATE INDEX idx_election_office_district ON elections.election_results (office, district);
+
+CREATE UNIQUE INDEX idx_counties_fips ON public.counties (fips_code);
+CREATE UNIQUE INDEX idx_counties_name ON public.counties (county_name);
+
+
 CREATE SCHEMA IF NOT EXISTS raw;
 -- then move raw_voters to raw schema
 ALTER TABLE registration.raw_voters SET SCHEMA raw;
