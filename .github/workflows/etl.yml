@@ -19,7 +19,7 @@ jobs:
         run: pip install pandas sqlalchemy psycopg2-binary python-dotenv
 
       - name: Run raw voters ETL
-        run: python etl/load_raw_voters.py
+        run: python etl/load_voters_raw.py
 
       - name: Run registration ETL
         run: python etl/load_registration.py
