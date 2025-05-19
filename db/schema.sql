@@ -176,3 +176,11 @@ CREATE TABLE IF NOT EXISTS registration.raw_voters (
     vtd_abbrv VARCHAR(6),
     vtd_desc VARCHAR(60)
 );
+
+CREATE INDEX idx_registration_date ON registration.voter_registration (registration_date);
+CREATE INDEX idx_election_date ON elections.election_results (election_date);
+CREATE INDEX idx_candidate_party ON elections.election_results (candidate, party);
+
+CREATE SCHEMA IF NOT EXISTS raw;
+-- then move raw_voters to raw schema
+ALTER TABLE registration.raw_voters SET SCHEMA raw;
