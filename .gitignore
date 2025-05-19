@@ -1,3 +1,4 @@
 #ignore raw data snapshots
 data/raw/*
 !data/raw/manifest.json
+myenv/
