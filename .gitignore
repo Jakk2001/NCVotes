@@ -2,3 +2,5 @@
 data/raw/*
 !data/raw/manifest.json
 myenv/
+__pycache__/
+*.pyc
