@@ -3,6 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from utils.db import get_engine
 
+#run with python -m viz.registration_trends
+
 def plot_registration_trends():
     engine = get_engine()
     query = """
