@@ -3,6 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from utils.db import get_engine
 
+#run with python -m viz.demographics_breakdown
+
 def bar_chart_by_party():
     engine = get_engine()
     query = """
@@ -24,3 +26,4 @@ def bar_chart_by_party():
 
 if __name__ == "__main__":
     bar_chart_by_party()
+
