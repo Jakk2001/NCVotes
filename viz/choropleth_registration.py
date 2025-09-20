@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from utils.geo import load_county_geojson
 from etl.choropleth import get_registration_by_county
 import mplcursors
+import os
 
 from viz.style import PARTY_COLORS, DEFAULT_FONT, DEFAULT_FONT_SIZE, TITLE_FONT_SIZE
 import mplcursors
@@ -33,6 +34,5 @@ def plot_registration_choropleth():
     plt.tight_layout()
     plt.savefig("viz/output/GEObreakdown.png")
     
-
 if __name__ == "__main__":
     plot_registration_choropleth()

@@ -11,7 +11,6 @@ plt.rcParams["font.size"] = DEFAULT_FONT_SIZE
 
 cursor = mplcursors.cursor(hover=True)
 cursor.connect("add", lambda sel: sel.annotation.set_text(f"Party: {sel.target[0]:.0f}, Value: {sel.target[1]:.0f}"))
-#run with python -m viz.registration_trends
 
 def plot_registration_trends():
     engine = get_engine()
@@ -35,3 +34,5 @@ def plot_registration_trends():
 
 if __name__ == "__main__":
     plot_registration_trends()
+
+#run with: python -m viz.registration_trends
