@@ -1,17 +1,4 @@
 [
-  {
-    "filename": "ncvoter_statewide_20250703_230645.zip",
-    "url": "https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvoter_Statewide.zip",
-    "downloaded_at": "2025-07-03T23:07:20Z"
-  },
-  {
-    "filename": "ncvoter_Statewide.txt",
-    "url": "https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvoter_Statewide.zip",
-    "downloaded_at": "2025-07-03T23:11:48Z"
-  },
-  {
-    "filename": "ncvoter_statewide_20250703_231114.zip",
-    "url": "https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvoter_Statewide.zip",
-    "downloaded_at": "2025-07-03T23:11:48Z"
-  }
+  {"filename":"ncvoter_statewide_20250515_150000.zip","url":"https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvoter_Statewide.zip","downloaded_at":"2025-05-15T15:00:00Z"},
+  {"filename":"election_results_statewide_20250515_150500.zip","url":"https://s3.amazonaws.com/dl.ncsbe.gov/data/nc_election_results_Statewide.zip","downloaded_at":"2025-05-15T15:05:00Z"}
 ]
