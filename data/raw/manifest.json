@@ -1,4 +1,41 @@
 [
-  {"filename":"ncvoter_statewide_20250515_150000.zip","url":"https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvoter_Statewide.zip","downloaded_at":"2025-05-15T15:00:00Z"},
-  {"filename":"election_results_statewide_20250515_150500.zip","url":"https://s3.amazonaws.com/dl.ncsbe.gov/data/nc_election_results_Statewide.zip","downloaded_at":"2025-05-15T15:05:00Z"}
+  {
+    "filename": "ncvoter_statewide_20250515_150000.zip",
+    "url": "https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvoter_Statewide.zip",
+    "downloaded_at": "2025-05-15T15:00:00Z"
+  },
+  {
+    "filename": "election_results_statewide_20250515_150500.zip",
+    "url": "https://s3.amazonaws.com/dl.ncsbe.gov/data/nc_election_results_Statewide.zip",
+    "downloaded_at": "2025-05-15T15:05:00Z"
+  },
+  {
+    "filename": "ncvoter_statewide_20260116_212347.zip",
+    "url": "https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvoter_Statewide.zip",
+    "file_type": "registration_zip",
+    "downloaded_at": "2026-01-16T21:24:14Z",
+    "metadata": {
+      "size_bytes": 504320433
+    }
+  },
+  {
+    "filename": "ncvoter_Statewide.txt",
+    "url": "https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvoter_Statewide.zip",
+    "file_type": "registration_data",
+    "downloaded_at": "2026-01-16T21:24:29Z",
+    "metadata": {
+      "size_bytes": 4154318751,
+      "extracted_from": "ncvoter_statewide_20260116_212347.zip"
+    }
+  },
+  {
+    "filename": "ncvoter_Statewide_sample.txt",
+    "url": "https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvoter_Statewide.zip",
+    "file_type": "registration_data",
+    "downloaded_at": "2026-01-16T21:24:29Z",
+    "metadata": {
+      "size_bytes": 371,
+      "extracted_from": "ncvoter_statewide_20260116_212347.zip"
+    }
+  }
 ]
