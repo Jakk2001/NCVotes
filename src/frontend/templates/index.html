@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NC Votes - Voter Registration Data Visualization</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>NC Votes</h1>
+            <p class="tagline">North Carolina Voter Registration Data & Analysis</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="intro">
+            <h2>About This Project</h2>
+            <p>
+                This platform provides real-time insights into voter registration trends and election 
+                results in North Carolina. Data is sourced from the NC State Board of Elections and 
+                updated regularly to provide the most current analysis.
+            </p>
+            {% if last_updated %}
+            <p class="last-updated">
+                <strong>Last Updated:</strong> {{ last_updated.strftime('%B %d, %Y at %I:%M %p') }}
+            </p>
+            {% endif %}
+        </section>
+
+        <section class="visualizations">
+            <h2>Data Visualizations</h2>
+
+            {% if charts.party %}
+            <div class="chart-container">
+                <h3>Voter Registration by Party</h3>
+                <img src="{{ url_for('serve_chart', filename='party_breakdown.png') }}" 
+                     alt="Voter Registration by Party" 
+                     class="chart-image">
+                <p class="chart-description">
+                    Total registered voters broken down by political party affiliation.
+                </p>
+            </div>
+            {% endif %}
+
+            {% if charts.trends %}
+            <div class="chart-container">
+                <h3>Registration Trends Over Time</h3>
+                <img src="{{ url_for('serve_chart', filename='registration_trends.png') }}" 
+                     alt="Registration Trends Over Time" 
+                     class="chart-image">
+                <p class="chart-description">
+                    Historical trend of total voter registrations across North Carolina.
+                </p>
+            </div>
+            {% endif %}
+
+            {% if charts.county %}
+            <div class="chart-container">
+                <h3>Registration by County</h3>
+                <img src="{{ url_for('serve_chart', filename='county_choropleth.png') }}" 
+                     alt="County Registration Map" 
+                     class="chart-image">
+                <p class="chart-description">
+                    Geographic distribution of voter registrations across NC counties.
+                </p>
+            </div>
+            {% endif %}
+
+            {% if not (charts.party or charts.trends or charts.county) %}
+            <div class="alert alert-warning">
+                <strong>No visualizations available yet.</strong>
+                <p>Run the visualization scripts to generate charts.</p>
+            </div>
+            {% endif %}
+        </section>
+
+        <section class="api-info">
+            <h2>Data API</h2>
+            <p>Access registration statistics programmatically:</p>
+            <ul>
+                <li><code>/api/health</code> - System health and database status</li>
+                <li><code>/api/stats</code> - Current registration statistics</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>
+                Data source: 
+                <a href="https://www.ncsbe.gov/" target="_blank">NC State Board of Elections</a>
+            </p>
+            <p>&copy; 2025 NC Votes Project</p>
+        </div>
+    </footer>
+</body>
+</html>
