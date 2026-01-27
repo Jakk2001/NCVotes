@@ -11,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from src.scraper import registration as scraper_reg
 from src.scraper import results as scraper_res
-from src.etl import load_registration
+from src.etl import load_raw_voters
 from src.visualization import demographics, trends, choropleth
 from src.database.connection import test_connection
 
@@ -46,11 +46,12 @@ def run_full_pipeline():
     logger.info("✓ Registration data scraped successfully")
     
     # Step 3: Load registration data to database
-    logger.info("\n[3/6] Loading registration data to database...")
-    if not load_registration.load_registration():
-        logger.error("Registration data loading failed")
+    logger.info("\n[3/6] Loading raw voter data to database...")
+    logger.warning("This will take 30-60 minutes for 9M+ records...")
+    if not load_raw_voters.load_raw_voters():
+        logger.error("Raw voter data loading failed")
         return False
-    logger.info("✓ Registration data loaded successfully")
+    logger.info("✓ Raw voter data loaded successfully")
     
     # Step 4: Generate demographics visualization
     logger.info("\n[4/6] Generating demographics visualization...")
@@ -98,8 +99,8 @@ def run_etl_only():
         logger.error("Database connection failed")
         return False
     
-    logger.info("Loading registration data...")
-    load_registration.load_registration()
+    logger.info("Loading raw voter data...")
+    load_raw_voters.load_raw_voters()
     
     logger.info("ETL complete")
 
