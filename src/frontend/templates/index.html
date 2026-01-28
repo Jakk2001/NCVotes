@@ -88,10 +88,10 @@
             <div class="viz-grid">
                 {% if charts.party %}
                 <a href="{{ url_for('party_page') }}" class="viz-card">
-                    <h3>Registration by Party</h3>
+                    <h3>Voter Demographics</h3>
                     <div class="viz-preview">
                         <img src="{{ url_for('serve_chart', filename='party_breakdown.png') }}" 
-                             alt="Voter Registration by Party">
+                             alt="Voter Demographics">
                     </div>
                     <div class="viz-card-content">
                         <p class="viz-description">

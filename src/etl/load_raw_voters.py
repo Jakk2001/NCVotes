@@ -1,14 +1,22 @@
 """
 ETL: Load raw statewide voter registration file into raw_voters table.
 Optimized for large files with progress tracking and error recovery.
+Includes email notifications on successful completion.
 """
+import sys
+from pathlib import Path
+
+# Add project root to path
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
+
 import pandas as pd
 import logging
-from pathlib import Path
+from sqlalchemy import text
 from src.database.connection import get_engine
 from src.scraper.manifest import get_latest_file
+from src.email.notifications import send_update_email
 from config.settings import RAW_DATA_DIR
-from sqlalchemy import text
 
 logging.basicConfig(
     level=logging.INFO,
@@ -101,6 +109,16 @@ def load_raw_voters(chunksize: int = 10000) -> bool:
                 )
         
         logger.info(f"✓ Successfully loaded {rows_loaded:,} voter records")
+        
+        # Send email notification about the update
+        logger.info("Sending email notification...")
+        try:
+            send_update_email()
+            logger.info("Email notification sent")
+        except Exception as e:
+            logger.warning(f"Failed to send email notification: {e}")
+            # Don't fail the entire process if email fails
+        
         return True
         
     except Exception as e:

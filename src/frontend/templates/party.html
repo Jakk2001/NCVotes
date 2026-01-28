@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration by Party - NC Votes</title>
+    <title>Voter Demographics - NC Votes</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -22,7 +22,7 @@
             <div class="breadcrumb">
                 <a href="{{ url_for('index') }}">← Back to Home</a>
             </div>
-            <h1>Registration by Party</h1>
+            <h1>Voter Demographics</h1>
             <p class="tagline">Political party affiliation across North Carolina</p>
         </div>
     </header>
@@ -75,7 +75,7 @@
                                     </div>
                                     <div class="party-bar">
                                         <div class="party-bar-fill" 
-                                             style="width: {{ (party.total / stats.total * 100)|round(1) }}%"></div>
+                                             style="width: {{(party.total / stats.total * 100)|round(1)}}%"></div>
                                     </div>
                                     <span class="party-percent">{{ (party.total / stats.total * 100)|round(1) }}% of total registrations</span>
                                 </div>
