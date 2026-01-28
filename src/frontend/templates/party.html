@@ -50,18 +50,18 @@
                         <div class="info-grid">
                             {% if stats %}
                             <div class="stats-panel">
-                                <h3>Key Statistics</h3>
+                                <h3>Party Affiliation Key Statistics</h3>
                                 <div class="stat-item">
                                     <span class="stat-label">Total Registered Voters</span>
-                                    <span class="stat-value">{{ "{:,}".format(stats.total) }}</span>
+                                    <span class="stat-value1">{{ "{:,}".format(stats.total) }}</span>
                                 </div>
                                 <div class="stat-item">
-                                    <span class="stat-label">Largest Party</span>
-                                    <span class="stat-value">{{ stats.top_party }}</span>
+                                    <span class="stat-label">Largest Party Affiliation</span>
+                                    <span class="stat-value2">Unaffiliated</span>
                                 </div>
                                 <div class="stat-item">
                                     <span class="stat-label">Top Party Registrations</span>
-                                    <span class="stat-value">{{ "{:,}".format(stats.top_count) }}</span>
+                                    <span class="stat-value1">{{ "{:,}".format(stats.top_count) }}</span>
                                 </div>
                             </div>
 

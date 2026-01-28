@@ -87,6 +87,38 @@ def load_raw_voters(chunksize: int = 10000) -> bool:
             
             # Strip quotes from column names if present
             chunk.columns = chunk.columns.str.strip().str.replace('"', '')
+
+            
+            # After loading each chunk, add this:
+            from datetime import datetime
+
+            current_year = datetime.now().year
+
+            def calculate_age_group(birth_year):
+                """Calculate age group from birth year."""
+                if pd.isna(birth_year) or not str(birth_year).isdigit():
+                    return 'Unknown'
+                
+                try:
+                    age = current_year - int(birth_year)
+                    if 18 <= age <= 25:
+                        return '18-25'
+                    elif 26 <= age <= 35:
+                        return '26-35'
+                    elif 36 <= age <= 50:
+                        return '36-50'
+                    elif 51 <= age <= 65:
+                        return '51-65'
+                    elif age > 65:
+                        return '65+'
+                    else:
+                        return 'Unknown'
+                except:
+                    return 'Unknown'
+
+            # Add to chunk before writing to database
+            chunk['age_group'] = chunk['birth_year'].apply(calculate_age_group)
+            
             
             # Write to database - use None method for simpler inserts
             chunk.to_sql(
