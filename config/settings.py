@@ -61,6 +61,16 @@ PARTY_COLORS = {
     "GRE": "#109618",
 }
 
+# Email configuration
+EMAIL_CONFIG = {
+    "enabled": os.getenv("EMAIL_ENABLED", "false").lower() == "true",
+    "smtp_server": "smtp.gmail.com",
+    "smtp_port": 587,
+    "smtp_user": os.getenv("EMAIL_USER", ""),  # Your Gmail address
+    "smtp_password": os.getenv("EMAIL_PASSWORD", ""),  # Gmail App Password
+    "to_email": os.getenv("EMAIL_TO", os.getenv("EMAIL_USER", "")),  # Defaults to sending to yourself
+}
+
 def get_db_url():
     """Construct PostgreSQL connection URL."""
     return (
