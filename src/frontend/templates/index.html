@@ -3,152 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NC Votes | North Carolina Voter Data</title>
+    <title>NC Votes - Voter Registration Data Visualization</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <!-- Hero Section -->
+    <nav>
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="logo">NC VOTES</a>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#data">Data</a></li>
+            </ul>
+        </div>
+    </nav>
+
     <section class="hero">
-        <div class="hero-content">
-            <h1>NC <span>Votes</span></h1>
-            <p>Understanding North Carolina's voter landscape through data</p>
-            
-            <div class="stats-banner">
+        <div class="container">
+            <h1>North Carolina voter data, visualized.</h1>
+            <p class="tagline">
+                Track voter registration trends, analyze election patterns, and understand 
+                North Carolina's evolving electorate through real-time data visualization.
+            </p>
+            <a href="#data" class="hero-cta">Explore the Data</a>
+        </div>
+    </section>
+
+    <section class="stats-bar">
+        <div class="container">
+            <div class="stats-grid">
                 <div class="stat-box">
-                    <span class="stat-number">7.7M</span>
+                    <span class="stat-number">7.8M+</span>
                     <span class="stat-label">Registered Voters</span>
                 </div>
                 <div class="stat-box">
                     <span class="stat-number">100</span>
-                    <span class="stat-label">Counties</span>
+                    <span class="stat-label">Counties Tracked</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">Bi-weekly</span>
+                    <span class="stat-label">Data Updates</span>
                 </div>
                 <div class="stat-box">
                     <span class="stat-number">2026</span>
-                    <span class="stat-label">Current Data</span>
+                    <span class="stat-label">Data Since</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Data Insights Section -->
-    <section style="background: white;">
+    <section class="about" id="about">
         <div class="container">
-            <div class="section-header">
+            <div class="about-content">
+                <h2>Understanding North Carolina's Electorate</h2>
+                <p>
+                    NC Votes provides comprehensive, data-driven insights into voter registration 
+                    and electoral patterns across North Carolina. Our platform aggregates official 
+                    data from the NC State Board of Elections, making complex electoral information 
+                    accessible and understandable for researchers, journalists, advocates, and citizens.
+                </p>
+                <div class="highlight">
+                    <strong>Our Mission</strong>
+                    To strengthen democracy through transparency and data accessibility, empowering 
+                    North Carolinians to understand and engage with their electoral system.
+                </div>
                 {% if last_updated %}
-                <span class="update-badge">Updated {{ last_updated.strftime('%B %d, %Y') }}</span>
+                <p style="color: #666; font-size: 1rem; margin-top: 2rem;">
+                    <strong>Data Last Updated:</strong> {{ last_updated.strftime('%B %d, %Y at %I:%M %p') }}
+                </p>
                 {% endif %}
-                <h2>Key Insights</h2>
-                <p>Real-time analysis of North Carolina's voter registration data</p>
-            </div>
-
-            <div class="insights-grid">
-                <div class="insight-box">
-                    <h4>Unaffiliated</h4>
-                    <div class="big-number">33%</div>
-                    <p>Largest voting bloc</p>
-                </div>
-                <div class="insight-box">
-                    <h4>Republican</h4>
-                    <div class="big-number">27%</div>
-                    <p>Second largest</p>
-                </div>
-                <div class="insight-box">
-                    <h4>Democrat</h4>
-                    <div class="big-number">26%</div>
-                    <p>Third largest</p>
-                </div>
-                <div class="insight-box">
-                    <h4>Wake County</h4>
-                    <div class="big-number">#1</div>
-                    <p>Most registered voters</p>
-                </div>
             </div>
         </div>
     </section>
 
-    <!-- Visualizations Section -->
-    <section style="background: var(--soft-gray);">
+    <section class="visualizations" id="data">
         <div class="container">
             <div class="section-header">
                 <h2>Data Visualizations</h2>
-                <p>Explore North Carolina's voter registration trends and patterns</p>
+                <p>
+                    Explore comprehensive visualizations of North Carolina's voter registration data
+                </p>
             </div>
 
-            <div class="chart-grid">
+            {% if charts.party or charts.trends or charts.county %}
+            <div class="viz-grid">
                 {% if charts.party %}
-                <div class="chart-card">
-                    <h3>Party Registration</h3>
-                    <p>Breakdown of voter registration by political party affiliation across all NC counties.</p>
-                    <img src="{{ url_for('serve_chart', filename='party_breakdown.png') }}" alt="Party Breakdown Chart">
-                </div>
+                <a href="{{ url_for('party_page') }}" class="viz-card">
+                    <h3>Registration by Party</h3>
+                    <div class="viz-preview">
+                        <img src="{{ url_for('serve_chart', filename='party_breakdown.png') }}" 
+                             alt="Voter Registration by Party">
+                    </div>
+                    <div class="viz-card-content">
+                        <p class="viz-description">
+                            Comprehensive breakdown of voter registration by political party affiliation 
+                            across North Carolina. Track the balance of registered Democrats, Republicans, 
+                            and unaffiliated voters.
+                        </p>
+                        <span class="viz-link">View Full Analysis</span>
+                    </div>
+                </a>
                 {% endif %}
 
                 {% if charts.trends %}
-                <div class="chart-card">
+                <a href="{{ url_for('trends_page') }}" class="viz-card">
                     <h3>Registration Trends</h3>
-                    <p>Historical voter registration growth from 1946 to present day.</p>
-                    <img src="{{ url_for('serve_chart', filename='registration_trends.png') }}" alt="Registration Trends">
-                </div>
+                    <div class="viz-preview">
+                        <img src="{{ url_for('serve_chart', filename='registration_trends.png') }}" 
+                             alt="Registration Trends Over Time">
+                    </div>
+                    <div class="viz-card-content">
+                        <p class="viz-description">
+                            Historical analysis of voter registration growth and patterns. Identify 
+                            trends, spikes during election years, and long-term shifts in North 
+                            Carolina's electorate.
+                        </p>
+                        <span class="viz-link">View Full Analysis</span>
+                    </div>
+                </a>
                 {% endif %}
 
                 {% if charts.county %}
-                <div class="chart-card">
-                    <h3>County Distribution</h3>
-                    <p>Geographic distribution of registered voters across North Carolina's 100 counties.</p>
-                    <img src="{{ url_for('serve_chart', filename='county_choropleth.png') }}" alt="County Map">
-                </div>
+                <a href="{{ url_for('county_page') }}" class="viz-card">
+                    <h3>Geographic Distribution</h3>
+                    <div class="viz-preview">
+                        <img src="{{ url_for('serve_chart', filename='county_choropleth.png') }}" 
+                             alt="County Registration Map">
+                    </div>
+                    <div class="viz-card-content">
+                        <p class="viz-description">
+                            Interactive mapping of voter registration across all 100 North Carolina 
+                            counties. Discover regional patterns and urban-rural divides in 
+                            registration density.
+                        </p>
+                        <span class="viz-link">View Full Analysis</span>
+                    </div>
+                </a>
                 {% endif %}
             </div>
+            {% else %}
+            <div class="alert alert-warning">
+                <strong>No visualizations available yet.</strong>
+                <p>Run the visualization scripts to generate charts and begin exploring the data.</p>
+            </div>
+            {% endif %}
         </div>
     </section>
 
-    <!-- About Section -->
-    <section style="background: white;">
+    <section class="why-matters">
         <div class="container">
-            <div class="section-header">
-                <h2>About This Project</h2>
-            </div>
-
-            <div class="feature-card">
-                <h3>Our Mission</h3>
-                <p>We believe democracy works best when everyone has access to clear, accurate information about the electorate. To that end, NC Votes provides transparent, accessible insights into North Carolina's voter registration data.</p>
-            </div>
-
-            <div class="feature-card">
-                <h3>What We Track</h3>
-                <ul class="feature-list">
-                    <li>7.7 million registered voters (Active & Inactive)</li>
-                    <li>Party affiliation breakdowns by county and precinct</li>
-                    <li>Historical registration trends dating back to 1946</li>
-                    <li>Geographic distribution across all 100 NC counties</li>
-                    <li>Demographic data including age, race, and gender</li>
-                </ul>
-            </div>
-
-            <div class="feature-card">
-                <h3>Data Source</h3>
-                <p>All data is sourced directly from the <a href="https://www.ncsbe.gov/" target="_blank" style="color: var(--nc-blue); font-weight: 600;">North Carolina State Board of Elections</a> and updated bi-weekly to ensure accuracy.</p>
+            <h2>Why Voter Data Matters</h2>
+            <div class="reasons-grid">
+                <div class="reason-item">
+                    <h3>Transparency</h3>
+                    <p>
+                        Public access to voter registration data ensures electoral transparency 
+                        and helps identify potential issues in the registration system.
+                    </p>
+                </div>
+                <div class="reason-item">
+                    <h3>Research</h3>
+                    <p>
+                        Academics, journalists, and policy researchers rely on accurate voter 
+                        data to understand electoral trends and inform public discourse.
+                    </p>
+                </div>
+                <div class="reason-item">
+                    <h3>Civic Engagement</h3>
+                    <p>
+                        Understanding registration patterns helps organizations target voter 
+                        registration drives and get-out-the-vote efforts more effectively.
+                    </p>
+                </div>
+                <div class="reason-item">
+                    <h3>Accountability</h3>
+                    <p>
+                        Data-driven insights hold election officials accountable and help 
+                        identify areas where registration access needs improvement.
+                    </p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="container">
-            <h2>Want to explore the data?</h2>
-            <p>Access our API for programmatic data access and custom analysis</p>
-            <a href="/api/health" class="btn">View API Documentation</a>
-        </div>
-    </section>
-
-    <!-- Footer -->
     <footer>
         <div class="container">
-            <p><strong>NC Votes</strong> | North Carolina Voter Data Analysis</p>
-            <p>Data sourced from <a href="https://www.ncsbe.gov/" target="_blank">NC State Board of Elections</a></p>
-            {% if last_updated %}
-            <p style="margin-top: 20px; opacity: 0.6;">Last updated: {{ last_updated.strftime('%B %d, %Y at %I:%M %p') }}</p>
-            {% endif %}
+            <p>
+                Data source: 
+                <a href="https://www.ncsbe.gov/" target="_blank" rel="noopener">
+                    NC State Board of Elections
+                </a>
+            </p>
+            <p>&copy; 2025 NC Votes Project | Advancing Democracy Through Data</p>
         </div>
     </footer>
 </body>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Trends - NC Votes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="logo">NC VOTES</a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}#about">About</a></li>
+                <li><a href="{{ url_for('index') }}#data">Data</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{{ url_for('index') }}">← Back to Home</a>
+            </div>
+            <h1>Registration Trends</h1>
+            <p class="tagline">Historical voter registration patterns in North Carolina</p>
+        </div>
+    </header>
+
+    <main>
+        {% if chart_exists %}
+        <section class="detail-section">
+            <div class="container">
+                <div class="detail-grid">
+                    <div class="detail-chart">
+                        <img src="{{ url_for('serve_chart', filename='registration_trends.png') }}" 
+                             alt="Registration Trends Over Time"
+                             class="chart-image-large">
+                    </div>
+
+                    <div class="detail-info">
+                        <h2>Tracking Electoral Growth</h2>
+                        <p>
+                            This time series analysis tracks the evolution of voter registration 
+                            in North Carolina. The trend line reveals critical patterns in civic 
+                            engagement, showing periods of increased registration activity and 
+                            identifying potential factors driving electoral participation.
+                        </p>
+
+                        <div class="info-grid">
+                            <div class="insight-box">
+                                <h3>Election Year Surges</h3>
+                                <p>
+                                    Voter registration typically experiences significant increases during 
+                                    election years, particularly in the months leading up to major federal 
+                                    and state elections. These spikes reflect heightened civic engagement, 
+                                    organized registration drives, and increased media attention to 
+                                    electoral politics.
+                                </p>
+                            </div>
+
+                            <div class="insight-box">
+                                <h3>Understanding Long-Term Trends</h3>
+                                <p>
+                                    Growth in voter registration reflects both demographic changes and 
+                                    shifts in civic engagement. Population increases, migration patterns, 
+                                    coming-of-age voters, and policy changes all contribute to registration 
+                                    trends. Analyzing these patterns helps understand the changing 
+                                    composition of North Carolina's electorate.
+                                </p>
+                            </div>
+
+                            <div class="insight-box">
+                                <h3>External Factors</h3>
+                                <p>
+                                    Registration patterns correlate with major political events, competitive 
+                                    races, organized registration campaigns, and changes in voter registration 
+                                    laws. Understanding these connections provides insight into what drives 
+                                    electoral participation.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="coming-soon">
+            <div class="container">
+                <h2>Expanding Trend Analysis</h2>
+                <p>We're developing additional analytical tools to provide deeper insights into registration patterns:</p>
+                <ul>
+                    <li>Party-specific registration trends showing changes in party affiliation over time</li>
+                    <li>Age cohort registration patterns tracking generational shifts</li>
+                    <li>Gender-based trend analysis revealing participation patterns by gender</li>
+                    <li>County-level registration growth comparisons across all 100 NC counties</li>
+                    <li>Correlation analysis with major political events and policy changes</li>
+                    <li>Seasonal registration patterns and peak registration periods</li>
+                    <li>Comparative analysis with national registration trends</li>
+                </ul>
+            </div>
+        </section>
+        {% else %}
+        <section class="detail-section">
+            <div class="container">
+                <div class="alert alert-warning">
+                    <strong>Visualization Not Available</strong>
+                    <p>The registration trends chart has not been generated yet. Please run the visualization scripts to create this analysis.</p>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>
+                Data source: 
+                <a href="https://www.ncsbe.gov/" target="_blank" rel="noopener">
+                    NC State Board of Elections
+                </a>
+            </p>
+            <p>&copy; 2025 NC Votes Project | Advancing Democracy Through Data</p>
+        </div>
+    </footer>
+</body>
+</html>

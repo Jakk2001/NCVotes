@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration by Party - NC Votes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="logo">NC VOTES</a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}#about">About</a></li>
+                <li><a href="{{ url_for('index') }}#data">Data</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{{ url_for('index') }}">← Back to Home</a>
+            </div>
+            <h1>Registration by Party</h1>
+            <p class="tagline">Political party affiliation across North Carolina</p>
+        </div>
+    </header>
+
+    <main>
+        {% if chart_exists %}
+        <section class="detail-section">
+            <div class="container">
+                <div class="detail-grid">
+                    <div class="detail-chart">
+                        <img src="{{ url_for('serve_chart', filename='party_breakdown.png') }}" 
+                             alt="Voter Registration by Party"
+                             class="chart-image-large">
+                    </div>
+
+                    <div class="detail-info">
+                        <h2>Party Registration Analysis</h2>
+                        <p>
+                            This comprehensive breakdown shows the distribution of registered voters 
+                            across political parties in North Carolina. Party registration provides 
+                            insight into the state's political landscape, though it doesn't necessarily 
+                            predict voting behavior.
+                        </p>
+
+                        <div class="info-grid">
+                            {% if stats %}
+                            <div class="stats-panel">
+                                <h3>Key Statistics</h3>
+                                <div class="stat-item">
+                                    <span class="stat-label">Total Registered Voters</span>
+                                    <span class="stat-value">{{ "{:,}".format(stats.total) }}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Largest Party</span>
+                                    <span class="stat-value">{{ stats.top_party }}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Top Party Registrations</span>
+                                    <span class="stat-value">{{ "{:,}".format(stats.top_count) }}</span>
+                                </div>
+                            </div>
+
+                            <div class="party-breakdown">
+                                <h3>Complete Party Distribution</h3>
+                                {% for party in stats.parties %}
+                                <div class="party-item">
+                                    <div class="party-header">
+                                        <span class="party-name">{{ party.party }}</span>
+                                        <span class="party-count">{{ "{:,}".format(party.total) }}</span>
+                                    </div>
+                                    <div class="party-bar">
+                                        <div class="party-bar-fill" 
+                                             style="width: {{ (party.total / stats.total * 100)|round(1) }}%"></div>
+                                    </div>
+                                    <span class="party-percent">{{ (party.total / stats.total * 100)|round(1) }}% of total registrations</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="insight-box">
+                            <h3>Understanding Party Registration</h3>
+                            <p>
+                                Party registration does not necessarily indicate voting behavior. Many 
+                                registered voters vote across party lines, and unaffiliated voters 
+                                represent a significant and growing portion of the electorate who may 
+                                lean toward either major party or remain truly independent.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="coming-soon">
+            <div class="container">
+                <h2>Expanding Party Analysis</h2>
+                <p>We're continually adding new features to provide deeper insights into party registration patterns:</p>
+                <ul>
+                    <li>Historical party registration trends showing shifts over time</li>
+                    <li>County-level party distribution maps and comparative analysis</li>
+                    <li>Demographic breakdowns within each party (age, gender, race)</li>
+                    <li>Age cohort analysis by party affiliation</li>
+                    <li>Gender distribution patterns across parties</li>
+                    <li>Comparative analysis across election cycles</li>
+                    <li>Party switching trends and registration changes</li>
+                </ul>
+            </div>
+        </section>
+        {% else %}
+        <section class="detail-section">
+            <div class="container">
+                <div class="alert alert-warning">
+                    <strong>Visualization Not Available</strong>
+                    <p>The party breakdown chart has not been generated yet. Please run the visualization scripts to create this analysis.</p>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>
+                Data source: 
+                <a href="https://www.ncsbe.gov/" target="_blank" rel="noopener">
+                    NC State Board of Elections
+                </a>
+            </p>
+            <p>&copy; 2025 NC Votes Project | Advancing Democracy Through Data</p>
+        </div>
+    </footer>
+</body>
+</html>
