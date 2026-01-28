@@ -179,3 +179,22 @@ COMMENT ON TABLE registration.voter_registration IS 'Aggregated voter registrati
 COMMENT ON TABLE raw.raw_voters IS 'Individual voter records from NC State Board of Elections';
 COMMENT ON TABLE elections.election_results IS 'Election results by precinct and candidate';
 COMMENT ON TABLE public.counties IS 'NC county reference data with FIPS codes';
+
+-- Add column
+ALTER TABLE raw.raw_voters ADD COLUMN age_group VARCHAR(10);
+
+-- Populate with current ages
+UPDATE raw.raw_voters
+SET age_group = 
+    CASE 
+        WHEN 2026 - CAST(birth_year AS INTEGER) BETWEEN 18 AND 25 THEN '18-25'
+        WHEN 2026 - CAST(birth_year AS INTEGER) BETWEEN 26 AND 35 THEN '26-35'
+        WHEN 2026 - CAST(birth_year AS INTEGER) BETWEEN 36 AND 50 THEN '36-50'
+        WHEN 2026 - CAST(birth_year AS INTEGER) BETWEEN 51 AND 65 THEN '51-65'
+        WHEN 2026 - CAST(birth_year AS INTEGER) > 65 THEN '65+'
+        ELSE 'Unknown'
+    END
+WHERE birth_year IS NOT NULL AND birth_year ~ '^[0-9]+$';
+
+-- Add index for performance
+CREATE INDEX idx_raw_voters_age_group ON raw.raw_voters (age_group);

@@ -1,14 +1,15 @@
 /* NC Votes - Bold Redesign */
 
 :root {
-    --primary-color: #001f3f;
-    --secondary-color: #0074D9;
-    --accent-color: #FF4136;
+    --primary-color: #16003f;
+    --secondary-color: #a200ff;
+    --accent-color: #ff5e36;
     --text-color: #111111;
     --text-light: #555555;
     --bg-color: #ffffff;
     --bg-alt: #f4f4f4;
     --border-color: #dddddd;
+    --alt-accent: #a200ff;
 }
 
 * {
@@ -133,7 +134,7 @@ nav .container {
 .stat-number {
     font-size: 4rem;
     font-weight: 800;
-    color: var(--secondary-color);
+    color: var(--alt-accent);
     line-height: 1;
     display: block;
     margin-bottom: 0.5rem;
@@ -198,10 +199,11 @@ nav .container {
 }
 
 .about-content .highlight {
-    background: white;
+    background: var(--border-color);
     padding: 2rem;
     margin: 3rem 0;
-    border-left: 6px solid var(--secondary-color);
+    border-bottom: 2px solid var(--accent-color);
+    border-right: 2px solid var(--accent-color);
     text-align: left;
 }
 
@@ -514,11 +516,18 @@ nav .container {
     font-weight: 600;
 }
 
-.stat-value {
+.stat-value1 {
     font-size: 2rem;
     font-weight: 800;
     color: var(--secondary-color);
 }
+
+.stat-value2 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-light);
+}
+
 
 /* Party Breakdown */
 .party-breakdown {
@@ -570,9 +579,10 @@ nav .container {
 
 .party-bar-fill {
     height: 100%;
-    background: var(--secondary-color);
+    background: var(--alt-accent);
     transition: width 0.8s ease-out;
 }
+
 
 .party-percent {
     font-size: 1rem;
@@ -582,8 +592,9 @@ nav .container {
 
 /* Insight Box */
 .insight-box {
-    background: #fffbf0;
-    border-left: 6px solid var(--accent-color);
+    background: var(--border-color);
+    border-bottom: 2px solid var(--accent-color);
+    border-right: 2px solid var(--accent-color);
     padding: 2rem;
     margin: 2rem 0;
 }
@@ -591,12 +602,12 @@ nav .container {
 .insight-box h3 {
     font-size: 1.4rem;
     margin-bottom: 1rem;
-    color: #856404;
+    color: var(--text-color);
     font-weight: 700;
 }
 
 .insight-box p {
-    color: #856404;
+    color: var(--text-color);
     font-size: 1.1rem;
     line-height: 1.8;
     margin: 0;
