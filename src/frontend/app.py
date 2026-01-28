@@ -13,7 +13,7 @@ from flask import Flask, render_template, send_from_directory, jsonify
 import logging
 from datetime import datetime
 from src.database.connection import get_engine, test_connection
-from src.database.queries import get_registration_by_party
+from src.database.queries import get_registration_by_party, get_registration_by_county
 from config.settings import CHARTS_DIR, PROJECT_ROOT
 
 logging.basicConfig(
@@ -58,6 +58,75 @@ def index():
         )
     except Exception as e:
         logger.error(f"Error rendering index: {e}")
+        return f"Error: {e}", 500
+
+@app.route("/party")
+def party_page():
+    """Dedicated page for party registration visualization."""
+    try:
+        chart_exists = (CHARTS_DIR / "party_breakdown.png").exists()
+        
+        # Get party statistics
+        stats = {}
+        if chart_exists:
+            engine = get_engine()
+            df = get_registration_by_party(engine)
+            if not df.empty:
+                stats = {
+                    'total': int(df['total'].sum()),
+                    'parties': df.to_dict('records'),
+                    'top_party': df.iloc[0]['party'] if len(df) > 0 else None,
+                    'top_count': int(df.iloc[0]['total']) if len(df) > 0 else 0
+                }
+        
+        return render_template(
+            "party.html",
+            chart_exists=chart_exists,
+            stats=stats
+        )
+    except Exception as e:
+        logger.error(f"Error rendering party page: {e}")
+        return f"Error: {e}", 500
+
+@app.route("/trends")
+def trends_page():
+    """Dedicated page for registration trends visualization."""
+    try:
+        chart_exists = (CHARTS_DIR / "registration_trends.png").exists()
+        return render_template(
+            "trends.html",
+            chart_exists=chart_exists
+        )
+    except Exception as e:
+        logger.error(f"Error rendering trends page: {e}")
+        return f"Error: {e}", 500
+
+@app.route("/county")
+def county_page():
+    """Dedicated page for county distribution visualization."""
+    try:
+        chart_exists = (CHARTS_DIR / "county_choropleth.png").exists()
+        
+        # Get county statistics
+        stats = {}
+        if chart_exists:
+            engine = get_engine()
+            df = get_registration_by_county(engine)
+            if not df.empty:
+                stats = {
+                    'total_counties': len(df),
+                    'total_registered': int(df['registered'].sum()),
+                    'top_county': df.iloc[0]['county'] if len(df) > 0 else None,
+                    'top_count': int(df.iloc[0]['registered']) if len(df) > 0 else 0
+                }
+        
+        return render_template(
+            "county.html",
+            chart_exists=chart_exists,
+            stats=stats
+        )
+    except Exception as e:
+        logger.error(f"Error rendering county page: {e}")
         return f"Error: {e}", 500
 
 @app.route("/charts/<filename>")
