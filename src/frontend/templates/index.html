@@ -82,6 +82,19 @@
 
             {% if charts.party or charts.trends or charts.county %}
             <div class="viz-grid">
+                <!-- Interactive Map Card - NEW -->
+                <a href="{{ url_for('interactive_map') }}" class="viz-card">
+                    <h3>Interactive County Map</h3>
+                    <div class="viz-card-content">
+                        <p class="viz-description">
+                            Explore voter registration with interactive maps featuring multiple data 
+                            layers, hover tooltips, zoom controls, and demographic breakdowns by 
+                            party, race, and gender.
+                        </p>
+                        <span class="viz-link">Explore Interactive Map</span>
+                    </div>
+                </a>
+
                 {% if charts.party %}
                 <a href="{{ url_for('party_page') }}" class="viz-card">
                     <h3>Voter Demographics</h3>

@@ -1,0 +1,7 @@
+Requirement already satisfied: fiona in c:\users\jvyor\anaconda3\lib\site-packages (1.10.1)
+Requirement already satisfied: attrs>=19.2.0 in c:\users\jvyor\anaconda3\lib\site-packages (from fiona) (23.1.0)
+Requirement already satisfied: certifi in c:\users\jvyor\anaconda3\lib\site-packages (from fiona) (2025.4.26)
+Requirement already satisfied: click~=8.0 in c:\users\jvyor\anaconda3\lib\site-packages (from fiona) (8.1.7)
+Requirement already satisfied: click-plugins>=1.0 in c:\users\jvyor\anaconda3\lib\site-packages (from fiona) (1.1.1.2)
+Requirement already satisfied: cligj>=0.5 in c:\users\jvyor\anaconda3\lib\site-packages (from fiona) (0.7.2)
+Requirement already satisfied: colorama in c:\users\jvyor\anaconda3\lib\site-packages (from click~=8.0->fiona) (0.4.6)
