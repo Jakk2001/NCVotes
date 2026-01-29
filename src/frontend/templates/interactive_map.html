@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Map - NC Votes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .layer-selector {
+            background: white;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 2px solid var(--border-color);
+        }
+        
+        .layer-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        
+        .layer-btn {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: 2px solid var(--border-color);
+            background: white;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .layer-btn:hover {
+            background: var(--bg-alt);
+            border-color: var(--secondary-color);
+        }
+        
+        .layer-btn.active {
+            background: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+        
+        .map-container {
+            background: white;
+            padding: 2rem;
+            border: 2px solid var(--border-color);
+            margin: 2rem 0;
+            min-height: 700px;
+        }
+        
+        .map-frame {
+            width: 100%;
+            height: 700px;
+            border: none;
+        }
+        
+        .info-panel {
+            background: var(--bg-alt);
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 6px solid var(--accent-color);
+        }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            color: var(--secondary-color);
+            flex-shrink: 0;
+        }
+        
+        .feature-content h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .feature-content p {
+            color: var(--text-light);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="logo">NC VOTES</a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}#about">About</a></li>
+                <li><a href="{{ url_for('index') }}#data">Data</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{{ url_for('index') }}">← Back to Home</a>
+            </div>
+            <h1>Interactive County Map</h1>
+            <p class="tagline">Explore voter registration data with multiple layers and interactive features</p>
+        </div>
+    </header>
+
+    <main>
+        <section class="detail-section">
+            <div class="container">
+                <div class="layer-selector">
+                    <h2>Select Data Layer</h2>
+                    <p>Choose what data to visualize on the map:</p>
+                    <div class="layer-buttons">
+                        <a href="{{ url_for('interactive_map', layer='total') }}" 
+                           class="layer-btn {% if layer == 'total' %}active{% endif %}">
+                            Total Voters
+                        </a>
+                        <a href="{{ url_for('interactive_map', layer='party') }}" 
+                           class="layer-btn {% if layer == 'party' %}active{% endif %}">
+                            Partisan Affiliation
+                        </a>
+                        <a href="{{ url_for('interactive_map', layer='race') }}" 
+                           class="layer-btn {% if layer == 'race' %}active{% endif %}">
+                            Race
+                        </a>
+                        <a href="{{ url_for('interactive_map', layer='gender') }}" 
+                           class="layer-btn {% if layer == 'gender' %}active{% endif %}">
+                            Gender
+                        </a>
+                    </div>
+                </div>
+
+                {% if map_exists %}
+                <div class="map-container">
+                    <iframe src="{{ url_for('serve_map', filename=map_filename) }}" 
+                            class="map-frame"
+                            title="Interactive Map"></iframe>
+                </div>
+                {% else %}
+                <div class="alert alert-warning">
+                    <strong>Map Not Available</strong>
+                    <p>The interactive map for this layer has not been generated yet. Run the visualization scripts to create it.</p>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="coming-soon">
+            <div class="container">
+                <h2>Coming Soon: Precinct-Level Views</h2>
+                <p>We're developing advanced drill-down features that will allow you to:</p>
+                <ul>
+                    <li>Click on any county to view precinct-level data within that county</li>
+                    <li>See detailed party breakdowns for each precinct</li>
+                    <li>Compare registration patterns between adjacent precincts</li>
+                    <li>View historical changes in precinct-level registration</li>
+                    <li>Export precinct data for your own analysis</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>
+                Data source: 
+                <a href="https://www.ncsbe.gov/" target="_blank" rel="noopener">
+                    NC State Board of Elections
+                </a>
+            </p>
+            <p>&copy; 2026 NC Votes Project</p>
+        </div>
+    </footer>
+</body>
+</html>

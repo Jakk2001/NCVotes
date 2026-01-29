@@ -1,6 +1,6 @@
 """
 Flask web application for NCVotes data visualization.
-Improved version with better routing, error handling, and data freshness tracking.
+Includes interactive map functionality with multiple data layers.
 """
 import sys
 from pathlib import Path
@@ -9,12 +9,16 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from flask import Flask, render_template, send_from_directory, jsonify
+from flask import Flask, render_template, send_from_directory, jsonify, request
 import logging
 from datetime import datetime
 from src.database.connection import get_engine, test_connection
-from src.database.queries import get_registration_by_party, get_registration_by_county
-from config.settings import CHARTS_DIR, PROJECT_ROOT
+from src.database.queries import (
+    get_registration_by_party, 
+    get_registration_by_county,
+    get_precinct_data_by_county
+)
+from config.settings import CHARTS_DIR, PROJECT_ROOT, OUTPUT_DIR
 
 logging.basicConfig(
     level=logging.INFO,
@@ -129,6 +133,44 @@ def county_page():
         logger.error(f"Error rendering county page: {e}")
         return f"Error: {e}", 500
 
+@app.route("/interactive-map")
+def interactive_map():
+    """Interactive choropleth map with multiple data layers."""
+    try:
+        # Get requested layer (default to 'total')
+        layer = request.args.get('layer', 'total')
+        
+        # Validate layer - only 4 main maps now
+        valid_layers = ['total', 'party', 'race', 'gender']
+        if layer not in valid_layers:
+            layer = 'total'
+        
+        # Check if map exists
+        maps_dir = OUTPUT_DIR / 'maps'
+        map_filename = f'interactive_map_{layer}.html'
+        map_path = maps_dir / map_filename
+        map_exists = map_path.exists()
+        
+        return render_template(
+            "interactive_map.html",
+            layer=layer,
+            map_exists=map_exists,
+            map_filename=map_filename
+        )
+    except Exception as e:
+        logger.error(f"Error rendering interactive map: {e}")
+        return f"Error: {e}", 500
+
+@app.route("/maps/<filename>")
+def serve_map(filename):
+    """Serve interactive map HTML files."""
+    try:
+        maps_dir = OUTPUT_DIR / 'maps'
+        return send_from_directory(maps_dir, filename)
+    except FileNotFoundError:
+        logger.warning(f"Map not found: {filename}")
+        return "Map not found", 404
+
 @app.route("/charts/<filename>")
 def serve_chart(filename):
     """Serve chart images from the outputs directory."""
@@ -183,6 +225,26 @@ def get_stats():
         })
     except Exception as e:
         logger.error(f"Failed to get stats: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route("/api/precinct/<county>")
+def get_precinct_data(county):
+    """API endpoint to get precinct data for a specific county."""
+    try:
+        engine = get_engine()
+        df = get_precinct_data_by_county(engine, county)
+        
+        if df.empty:
+            return jsonify({'error': 'No data found for county'}), 404
+        
+        return jsonify({
+            'county': county,
+            'precincts': df.to_dict('records'),
+            'total_precincts': len(df),
+            'timestamp': datetime.utcnow().isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Failed to get precinct data for {county}: {e}")
         return jsonify({'error': str(e)}), 500
 
 @app.errorhandler(404)
