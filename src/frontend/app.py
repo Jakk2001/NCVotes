@@ -1,6 +1,6 @@
 """
-Flask web application for NCVotes data visualization.
-Includes interactive map functionality with multiple data layers.
+Flask web application for NC Elections Transparency Project data visualization.
+Improved version with better routing, error handling, and data freshness tracking.
 """
 import sys
 from pathlib import Path
@@ -9,16 +9,12 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from flask import Flask, render_template, send_from_directory, jsonify, request
+from flask import Flask, render_template, send_from_directory, jsonify
 import logging
 from datetime import datetime
 from src.database.connection import get_engine, test_connection
-from src.database.queries import (
-    get_registration_by_party, 
-    get_registration_by_county,
-    get_precinct_data_by_county
-)
-from config.settings import CHARTS_DIR, PROJECT_ROOT, OUTPUT_DIR
+from src.database.queries import get_registration_by_party, get_registration_by_county
+from config.settings import CHARTS_DIR, PROJECT_ROOT
 
 logging.basicConfig(
     level=logging.INFO,
@@ -137,6 +133,7 @@ def county_page():
 def interactive_map():
     """Interactive choropleth map with multiple data layers."""
     try:
+        from flask import request
         # Get requested layer (default to 'total')
         layer = request.args.get('layer', 'total')
         
@@ -146,6 +143,7 @@ def interactive_map():
             layer = 'total'
         
         # Check if map exists
+        from config.settings import OUTPUT_DIR
         maps_dir = OUTPUT_DIR / 'maps'
         map_filename = f'interactive_map_{layer}.html'
         map_path = maps_dir / map_filename
@@ -165,6 +163,7 @@ def interactive_map():
 def serve_map(filename):
     """Serve interactive map HTML files."""
     try:
+        from config.settings import OUTPUT_DIR
         maps_dir = OUTPUT_DIR / 'maps'
         return send_from_directory(maps_dir, filename)
     except FileNotFoundError:
@@ -225,26 +224,6 @@ def get_stats():
         })
     except Exception as e:
         logger.error(f"Failed to get stats: {e}")
-        return jsonify({'error': str(e)}), 500
-
-@app.route("/api/precinct/<county>")
-def get_precinct_data(county):
-    """API endpoint to get precinct data for a specific county."""
-    try:
-        engine = get_engine()
-        df = get_precinct_data_by_county(engine, county)
-        
-        if df.empty:
-            return jsonify({'error': 'No data found for county'}), 404
-        
-        return jsonify({
-            'county': county,
-            'precincts': df.to_dict('records'),
-            'total_precincts': len(df),
-            'timestamp': datetime.utcnow().isoformat()
-        })
-    except Exception as e:
-        logger.error(f"Failed to get precinct data for {county}: {e}")
         return jsonify({'error': str(e)}), 500
 
 @app.errorhandler(404)

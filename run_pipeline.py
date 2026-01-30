@@ -1,5 +1,5 @@
 """
-Complete data pipeline orchestrator for NCVotes project.
+Complete data pipeline orchestrator for NC Elections Transparency Project.
 Runs scraping, ETL, and visualization generation in sequence.
 """
 import logging
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 def run_full_pipeline():
     """Run the complete data pipeline."""
     logger.info("=" * 60)
-    logger.info("Starting NCVotes Data Pipeline")
+    logger.info("Starting NC Elections Transparency Project Data Pipeline")
     logger.info("=" * 60)
     
     # Step 1: Test database connection

@@ -1,4 +1,4 @@
-/* NC Votes - Bold Redesign */
+/* NC Elections Transparency Project - Website Styles */
 
 :root {
     --primary-color: #16003f;
@@ -49,10 +49,11 @@ nav .container {
 }
 
 .logo {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: var(--primary-color);
     text-decoration: none;
+    letter-spacing: -0.02em;
 }
 
 .nav-links {
@@ -736,5 +737,9 @@ footer p {
 
     .nav-links {
         gap: 1rem;
+    }
+    
+    .logo {
+        font-size: 1.1rem;
     }
 }
