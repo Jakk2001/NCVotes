@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NC Votes - Voter Registration Data Visualization</title>
+    <title>NC Elections Transparency Project - Voter Registration Data Visualization</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <nav>
         <div class="container">
-            <a href="{{ url_for('index') }}" class="logo">NC VOTES</a>
+            <a href="{{ url_for('index') }}" class="logo">NC ELECTIONS TRANSPARENCY</a>
             <ul class="nav-links">
                 <li><a href="#about">About</a></li>
                 <li><a href="#data">Data</a></li>
@@ -52,7 +52,7 @@
             <div class="about-content">
                 <h2>Understanding North Carolina's Electorate</h2>
                 <p>
-                    NC Votes provides comprehensive, data-driven insights into voter registration 
+                    The NC Elections Transparency Project provides comprehensive, data-driven insights into voter registration 
                     and electoral patterns across North Carolina. Our platform aggregates official 
                     data from the NC State Board of Elections, making complex electoral information 
                     accessible and understandable.
@@ -82,7 +82,7 @@
 
             {% if charts.party or charts.trends or charts.county %}
             <div class="viz-grid">
-                <!-- Interactive Map Card - NEW -->
+                <!-- Interactive Map Card -->
                 <a href="{{ url_for('interactive_map') }}" class="viz-card">
                     <h3>Interactive County Map</h3>
                     <div class="viz-card-content">
@@ -204,7 +204,7 @@
                 </a>
             </p>
 
-            <p>&copy; 2026 NC Votes Project </p>
+            <p>&copy; 2026 NC Elections Transparency Project </p>
         </div>
     </footer>
 </body>
