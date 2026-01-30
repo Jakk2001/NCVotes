@@ -96,16 +96,15 @@ def get_current_statistics():
         """))
         stats['by_age_group'] = {row[0]: row[1] for row in result}
         
-        # By county (top 10)
+        # By county (all counties)
         result = conn.execute(text("""
             SELECT county_desc, COUNT(*) as count 
             FROM raw.raw_voters 
             WHERE status_cd IN ('A', 'I')
             GROUP BY county_desc
             ORDER BY count DESC
-            LIMIT 10
         """))
-        stats['top_counties'] = {row[0]: row[1] for row in result}
+        stats['by_county'] = {row[0]: row[1] for row in result}
     
     return stats
 
@@ -177,29 +176,45 @@ def calculate_changes(current, previous):
     }
     
     # Party changes
+    prev_parties = prev_stats.get('by_party', {})
     for party, count in current['by_party'].items():
-        prev_count = prev_stats['by_party'].get(party, 0)
+        prev_count = prev_parties.get(party, 0)
         changes['party_changes'][party] = count - prev_count
     
     # Race changes
+    prev_races = prev_stats.get('by_race', {})
     for race, count in current['by_race'].items():
-        prev_count = prev_stats['by_race'].get(race, 0)
+        prev_count = prev_races.get(race, 0)
         changes['race_changes'][race] = count - prev_count
     
     # Gender changes
+    prev_genders = prev_stats.get('by_gender', {})
     for gender, count in current['by_gender'].items():
-        prev_count = prev_stats['by_gender'].get(gender, 0)
+        prev_count = prev_genders.get(gender, 0)
         changes['gender_changes'][gender] = count - prev_count
     
     # Age group changes
+    prev_age_groups = prev_stats.get('by_age_group', {})
     for age_group, count in current['by_age_group'].items():
-        prev_count = prev_stats['by_age_group'].get(age_group, 0)
+        prev_count = prev_age_groups.get(age_group, 0)
         changes['age_group_changes'][age_group] = count - prev_count
     
-    # County changes (top counties)
-    for county, count in current['top_counties'].items():
-        prev_count = prev_stats['top_counties'].get(county, 0)
+    # County changes (all counties)
+    # Handle old snapshots that don't have 'by_county' key
+    prev_counties = prev_stats.get('by_county', {})
+    
+    for county, count in current['by_county'].items():
+        prev_count = prev_counties.get(county, 0)
         changes['county_changes'][county] = count - prev_count
+    
+    # Find county with most growth
+    if changes['county_changes']:
+        top_county = max(changes['county_changes'].items(), key=lambda x: x[1])
+        changes['top_growth_county'] = top_county[0]
+        changes['top_growth_count'] = top_county[1]
+    else:
+        changes['top_growth_county'] = None
+        changes['top_growth_count'] = 0
     
     return changes
 
@@ -215,11 +230,14 @@ def format_email_body(current_stats, changes):
         str: Formatted HTML email body
     """
     if changes['is_first_run']:
+        # Get top 10 counties for initial load
+        top_counties = sorted(current_stats['by_county'].items(), key=lambda x: x[1], reverse=True)[:10]
+        
         body = f"""
         <html>
         <body style="font-family: Arial, sans-serif; color: #333; max-width: 800px;">
-            <h2 style="color: #001f3f;">NC Votes - Initial Data Load</h2>
-            <p>The NC Votes database has been initialized with voter registration data (ACTIVE and INACTIVE voters only).</p>
+            <h2 style="color: #001f3f;">NC Elections Transparency Project - Initial Data Load</h2>
+            <p>The database has been initialized with voter registration data (ACTIVE and INACTIVE voters only).</p>
             
             <h3>Overview</h3>
             <p style="font-size: 20px;"><strong>Total Registered Voters:</strong> {current_stats['total_voters']:,}</p>
@@ -322,6 +340,25 @@ def format_email_body(current_stats, changes):
             
             <div style="clear: both; margin-top: 30px;"></div>
             
+            <h3>Top 10 Counties by Registration</h3>
+            <table style="border-collapse: collapse; width: 100%; max-width: 600px;">
+                <tr style="background-color: #f4f4f4;">
+                    <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">County</th>
+                    <th style="padding: 8px; text-align: right; border: 1px solid #ddd;">Total</th>
+                </tr>
+        """
+        
+        for county, count in top_counties:
+            body += f"""
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">{county}</td>
+                    <td style="padding: 8px; text-align: right; border: 1px solid #ddd;">{count:,}</td>
+                </tr>
+            """
+        
+        body += f"""
+            </table>
+            
             <p style="margin-top: 20px; color: #666; font-size: 14px;">
                 Data snapshot saved to: data/last_snapshot.json<br>
                 Future emails will show changes since this baseline.
@@ -334,10 +371,14 @@ def format_email_body(current_stats, changes):
         change_sign = "+" if total_change >= 0 else ""
         change_color = "#109618" if total_change >= 0 else "#dc3912"
         
+        # Get county with most growth info
+        top_growth_county = changes.get('top_growth_county')
+        top_growth_count = changes.get('top_growth_count', 0)
+        
         body = f"""
         <html>
         <body style="font-family: Arial, sans-serif; color: #333; max-width: 900px;">
-            <h2 style="color: #001f3f;">NC Votes - Data Update</h2>
+            <h2 style="color: #001f3f;">NC Elections Transparency Project - Data Update</h2>
             <p>New voter registration data has been loaded (ACTIVE and INACTIVE voters only).</p>
             
             <h3>Overall Change</h3>
@@ -346,7 +387,18 @@ def format_email_body(current_stats, changes):
                 total registrations
             </p>
             <p><strong>Current Total:</strong> {current_stats['total_voters']:,}</p>
-            
+        """
+        
+        # Add top growth county if available
+        if top_growth_county and top_growth_count > 0:
+            body += f"""
+            <p style="font-size: 16px; margin: 15px 0; padding: 15px; background: #e8f5e9; border-left: 4px solid #109618;">
+                <strong>Top Growth County:</strong> {top_growth_county} 
+                ({change_sign}{top_growth_count:,} new registrations)
+            </p>
+            """
+        
+        body += """
             <h3>Changes by Party</h3>
             <table style="border-collapse: collapse; width: 100%; max-width: 600px;">
                 <tr style="background-color: #f4f4f4;">
@@ -463,7 +515,7 @@ def format_email_body(current_stats, changes):
         body += """
             </table>
             
-            <h3 style="margin-top: 30px;">Top Counties by Change</h3>
+            <h3 style="margin-top: 30px;">Top 5 Counties by Change</h3>
             <table style="border-collapse: collapse; width: 100%; max-width: 600px;">
                 <tr style="background-color: #f4f4f4;">
                     <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">County</th>
@@ -477,7 +529,7 @@ def format_email_body(current_stats, changes):
                                 key=lambda x: abs(x[1]), reverse=True)[:5]
         
         for county, change in sorted_counties:
-            total = current_stats['top_counties'].get(county, 0)
+            total = current_stats['by_county'].get(county, 0)
             change_sign = "+" if change >= 0 else ""
             row_color = "#e8f5e9" if change > 0 else "#ffebee" if change < 0 else "#fff"
             
@@ -533,8 +585,13 @@ def send_update_email():
         changes = calculate_changes(current_stats, previous_snapshot)
         
         # Format email
-        subject = "NC Votes - " + ("Initial Data Load" if changes['is_first_run'] 
-                                   else f"Data Update ({changes['total_change']:+,} registrations)")
+        if changes['is_first_run']:
+            subject = "NC Elections Transparency Project - Initial Data Load"
+        else:
+            subject = f"NC Elections Transparency Project - Data Update ({changes['total_change']:+,} registrations)"
+            if changes.get('top_growth_county'):
+                subject += f" | Top: {changes['top_growth_county']}"
+        
         body = format_email_body(current_stats, changes)
         
         # Send email
