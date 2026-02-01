@@ -60,6 +60,7 @@ def generate_maps(layer=None):
         create_party_map,
         create_race_map,
         create_gender_map,
+        create_unregistered_voters_map,
         create_all_maps
     )
     
@@ -74,6 +75,8 @@ def generate_maps(layer=None):
             result = create_race_map()
         elif layer == 'gender':
             result = create_gender_map()
+        elif layer == 'unregistered':
+            result = create_total_voters_map()
         else:
             logger.error(f"Invalid layer: {layer}")
             return False
@@ -89,7 +92,7 @@ def generate_maps(layer=None):
         results = create_all_maps()
         
         success_count = sum(1 for r in results.values() if r is not None)
-        logger.info(f"✓ Generated {success_count}/4 maps successfully")
+        logger.info(f"✓ Generated {success_count}/5 maps successfully")
         
         for layer_name, result in results.items():
             if result:
@@ -97,8 +100,8 @@ def generate_maps(layer=None):
             else:
                 logger.warning(f"  - {layer_name}: Failed")
         
-        return success_count == 4
-
+        return success_count == 5
+    
 def generate_precinct_map(county_name):
     """Generate precinct map for a specific county."""
     logger.warning("Precinct maps are not yet implemented in the new version")
@@ -167,7 +170,7 @@ Note: Each map (party, race, gender) has a dropdown menu to switch between subca
     
     parser.add_argument(
         '--generate', '-g',
-        choices=['all', 'total', 'party', 'race', 'gender'],
+        choices=['all', 'total', 'party', 'unregistered', 'race', 'gender'],
         help='Generate interactive map(s)'
     )
     

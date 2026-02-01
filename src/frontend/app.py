@@ -138,7 +138,7 @@ def interactive_map():
         layer = request.args.get('layer', 'total')
         
         # Validate layer - only 4 main maps now
-        valid_layers = ['total', 'party', 'race', 'gender']
+        valid_layers = ['total', 'unregistered', 'party', 'race', 'gender']
         if layer not in valid_layers:
             layer = 'total'
         
@@ -158,6 +158,8 @@ def interactive_map():
     except Exception as e:
         logger.error(f"Error rendering interactive map: {e}")
         return f"Error: {e}", 500
+    
+    
 
 @app.route("/maps/<filename>")
 def serve_map(filename):

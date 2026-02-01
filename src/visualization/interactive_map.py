@@ -98,7 +98,7 @@ def create_total_voters_map(output_filename='interactive_map_total.html'):
             locations=merged.index,
             z=merged['registered_log'],
             customdata=list(zip(merged['County'], merged['registered'])),
-            colorscale='Blues',
+            colorscale='blues',
             hovertemplate="<b>%{customdata[0]}</b><br>Registered Voters: %{customdata[1]:,.0f}<br><extra></extra>",
             marker_opacity=0.7,
             marker_line_width=1,
@@ -167,8 +167,7 @@ def create_party_map(output_filename='interactive_map_party.html'):
             locations=merged.index,
             z=merged['dem_pct'],
             customdata=customdata,
-            colorscale= ["Blues"],
-            coloraxis=dict(cmin=0, cmax=100),
+            colorscale= 'blues',
             zmin=0,           
             zmax=100,
             hovertemplate=(
@@ -192,7 +191,7 @@ def create_party_map(output_filename='interactive_map_party.html'):
                         dict(
                             args=[{
                                 "z": [merged['dem_pct']], 
-                                "colorscale": ["Blues"],
+                                "colorscale":  [[[0, 'rgb(240,248,255)'], [1, 'rgb(0, 60, 179)']]],
                                 "zmin": 0,       
                                 "zmax": 100,
                                 "colorbar.title.text": "% Democrat",
@@ -216,7 +215,7 @@ def create_party_map(output_filename='interactive_map_party.html'):
                         dict(
                             args=[{
                                 "z": [merged['una_pct']], 
-                                "colorscale": ["Purples"], 
+                                "colorscale": [[[0, 'rgb(240,248,255)'], [1, 'rgb(119, 32, 156)']]], 
                                 "colorbar.title.text": "% Unaffiliated",
                                 "zmin": 0,
                                 "zmax": 100,
@@ -228,7 +227,7 @@ def create_party_map(output_filename='interactive_map_party.html'):
                         dict(
                             args=[{
                                 "z": [merged['lib_pct']], 
-                                "colorscale": ["Yellows"], 
+                                "colorscale": [[[0, 'rgb(50,50,50)'], [1, 'rgb(214, 238, 5)']]], 
                                 "colorbar.title.text": "% Libertarian",
                                 "zmin": 0,
                                 "zmax": 5,
@@ -620,13 +619,213 @@ def create_gender_map(output_filename='interactive_map_gender.html'):
         logger.error(f"Failed to create Gender map: {e}", exc_info=True)
         return None
 
+
+
+"""
+Add this function to src/visualization/interactive_map.py
+"""
+
+def create_unregistered_voters_map(output_filename='interactive_map_unregistered.html'):
+    """Create map showing proportion of eligible but unregistered voters."""
+    try:
+        logger.info("Creating Unregistered Voters map")
+        
+        # Data from 2025_NCMissingVoters.pdf pages 24-26
+        unregistered_pct = {
+            "ALAMANCE": 12.9, "ALEXANDER": 5.2, "ALLEGHANY": 2.1, "ANSON": 42.6,
+            "ASHE": 1.5, "AVERY": 0.9, "BEAUFORT": 31.8, "BERTIE": 43.8,
+            "BLADEN": 38.4, "BRUNSWICK": 6.4, "BUNCOMBE": 5.1, "BURKE": 7.4,
+            "CABARRUS": 8.9, "CALDWELL": 7.1, "CAMDEN": 15.7, "CARTERET": 7.1,
+            "CASWELL": 27.8, "CATAWBA": 10.9, "CHATHAM": 8.2, "CHEROKEE": 1.2,
+            "CHOWAN": 29.0, "CLAY": 1.0, "CLEVELAND": 18.4, "COLUMBUS": 24.9,
+            "CRAVEN": 20.0, "CUMBERLAND": 27.2, "CURRITUCK": 10.9, "DARE": 6.0,
+            "DAVIDSON": 12.9, "DAVIE": 10.6, "DUPLIN": 33.8, "DURHAM": 15.3,
+            "EDGECOMBE": 48.3, "FORSYTH": 16.7, "FRANKLIN": 22.8, "GASTON": 15.3,
+            "GATES": 23.0, "GRAHAM": 1.7, "GRANVILLE": 28.5, "GREENE": 38.3,
+            "GUILFORD": 17.2, "HALIFAX": 46.5, "HARNETT": 20.3, "HAYWOOD": 2.8,
+            "HENDERSON": 4.2, "HERTFORD": 47.5, "HOKE": 29.8, "HYDE": 17.6,
+            "IREDELL": 10.9, "JACKSON": 1.6, "JOHNSTON": 18.1, "JONES": 30.1,
+            "LEE": 29.0, "LENOIR": 35.7, "LINCOLN": 9.2, "MACON": 1.1,
+            "MADISON": 2.9, "MARTIN": 35.2, "MCDOWELL": 6.1, "MECKLENBURG": 20.4,
+            "MITCHELL": 1.7, "MONTGOMERY": 21.3, "MOORE": 8.8, "NASH": 34.4,
+            "NEW HANOVER": 11.9, "NORTHAMPTON": 54.6, "ONSLOW": 14.3, "ORANGE": 8.7,
+            "PAMLICO": 12.9, "PASQUOTANK": 28.1, "PENDER": 15.6, "PERQUIMANS": 24.2,
+            "PERSON": 30.5, "PITT": 38.2, "POLK": 6.3, "RANDOLPH": 9.6,
+            "RICHMOND": 34.9, "ROBESON": 27.1, "ROCKINGHAM": 23.1, "ROWAN": 23.0,
+            "RUTHERFORD": 12.5, "SAMPSON": 29.9, "SCOTLAND": 37.1, "STANLY": 15.2,
+            "STOKES": 5.3, "SURRY": 5.5, "SWAIN": 1.2, "TRANSYLVANIA": 4.7,
+            "TYRRELL": 33.7, "UNION": 15.3, "VANCE": 55.2, "WAKE": 23.5,
+            "WARREN": 49.7, "WASHINGTON": 54.6, "WATAUGA": 3.1, "WAYNE": 37.5,
+            "WILKES": 6.6, "WILSON": 46.6, "YADKIN": 5.0, "YANCEY": 0.6
+        }
+        
+        # County population data (2025)
+        population_data = {
+            "WAKE": 1261494, "MECKLENBURG": 1236342, "GUILFORD": 564752,
+            "FORSYTH": 402451, "DURHAM": 350018, "CUMBERLAND": 338449,
+            "BUNCOMBE": 281631, "UNION": 269262, "JOHNSTON": 257230,
+            "CABARRUS": 249242, "NEW HANOVER": 246612, "GASTON": 245867,
+            "ONSLOW": 214724, "IREDELL": 212411, "ALAMANCE": 186463,
+            "PITT": 182610, "DAVIDSON": 180731, "BRUNSWICK": 174369,
+            "CATAWBA": 169153, "ROWAN": 154885, "ORANGE": 153515,
+            "HARNETT": 150400, "RANDOLPH": 149137, "HENDERSON": 121966,
+            "WAYNE": 121106, "ROBESON": 119543, "MOORE": 109762,
+            "CRAVEN": 105005, "CLEVELAND": 102827, "LINCOLN": 99436,
+            "NASH": 99184, "ROCKINGHAM": 94396, "BURKE": 88943,
+            "CHATHAM": 85756, "FRANKLIN": 82450, "CALDWELL": 80899,
+            "WILSON": 80310, "PENDER": 71798, "SURRY": 71637,
+            "CARTERET": 70806, "LEE": 69653, "STANLY": 68834,
+            "WILKES": 66355, "RUTHERFORD": 65805, "HAYWOOD": 63174,
+            "GRANVILLE": 61726, "SAMPSON": 61066, "HOKE": 56177,
+            "LENOIR": 55697, "WATAUGA": 54574, "DUPLIN": 51259,
+            "COLUMBUS": 49968, "EDGECOMBE": 49302, "HALIFAX": 46916,
+            "STOKES": 46228, "DAVIE": 46172, "MCDOWELL": 45570,
+            "JACKSON": 45512, "BEAUFORT": 44742, "VANCE": 42345,
+            "RICHMOND": 41977, "PASQUOTANK": 41656, "PERSON": 40454,
+            "MACON": 39004, "YADKIN": 38192, "DARE": 38185,
+            "ALEXANDER": 36959, "TRANSYLVANIA": 34272, "SCOTLAND": 34136,
+            "CURRITUCK": 32947, "CHEROKEE": 30794, "BLADEN": 30049,
+            "ASHE": 27464, "MONTGOMERY": 26487, "MADISON": 22665,
+            "ANSON": 22483, "CASWELL": 22247, "MARTIN": 21562,
+            "GREENE": 20698, "POLK": 20610, "WARREN": 19400,
+            "HERTFORD": 19104, "YANCEY": 19046, "AVERY": 17911,
+            "BERTIE": 16865, "NORTHAMPTON": 16455, "MITCHELL": 15057,
+            "SWAIN": 13967, "CHOWAN": 13888, "PERQUIMANS": 13553,
+            "PAMLICO": 12650, "CLAY": 12211, "ALLEGHANY": 11418,
+            "CAMDEN": 11236, "WASHINGTON": 10569, "GATES": 10244,
+            "JONES": 9476, "GRAHAM": 8279, "HYDE": 4528, "TYRRELL": 3514
+        }
+        
+        gdf = load_county_geometries()
+        engine = get_engine()
+        
+        # Get registered voters by county
+        registered_df = get_county_data_by_layer(engine, 'total')
+        
+        if registered_df.empty:
+            logger.warning("No data found for registered voters")
+            return None
+        
+        # Create dataframe with all calculations
+        data_rows = []
+        for county_name in unregistered_pct.keys():
+            county_upper = county_name.upper()
+            unreg_pct = unregistered_pct[county_upper]
+            population = population_data.get(county_upper, 0)
+            
+            # Find registered voters for this county
+            registered = 0
+            for _, row in registered_df.iterrows():
+                if row['county'].strip().upper() == county_upper:
+                    registered = row['registered']
+                    break
+            
+            # Calculate eligible voters (registered / (1 - unreg_pct/100))
+            if unreg_pct < 100:
+                eligible = registered / (1 - unreg_pct / 100)
+            else:
+                eligible = registered
+            
+            unregistered = eligible - registered
+            
+            data_rows.append({
+                'county': county_name.lower(),
+                'population': population,
+                'registered': registered,
+                'eligible': int(eligible),
+                'unregistered': int(unregistered),
+                'unreg_pct': unreg_pct
+            })
+        
+        data_df = pd.DataFrame(data_rows)
+        
+        # Merge with geometry
+        merged = prepare_map_data(gdf, data_df, 'unreg_pct', 'county')
+        
+        geojson = json.loads(merged.to_json())
+        customdata = list(zip(
+            merged['County'],
+            merged['population'],
+            merged['registered'],
+            merged['eligible'],
+            merged['unregistered'],
+            merged['unreg_pct']
+        ))
+        
+        # Create figure with red color scale (higher = more unregistered = worse)
+        fig = go.Figure(go.Choroplethmapbox(
+            geojson=geojson,
+            locations=merged.index,
+            z=merged['unreg_pct'],
+            customdata=customdata,
+            colorscale=[[0, "rgb(255,245,240)"], [0.2, "rgb(254,224,210)"], 
+                       [0.4, "rgb(252,187,161)"], [0.6, "rgb(252,146,114)"],
+                       [0.8, "rgb(251,106,74)"], [1, "rgb(203,24,29)"]],
+            hovertemplate=(
+                "<b>%{customdata[0]}</b><br>"
+                "Population: %{customdata[1]:,.0f}<br>"
+                "Registered: %{customdata[2]:,.0f}<br>"
+                "Eligible: %{customdata[3]:,.0f}<br>"
+                "Unregistered: %{customdata[4]:,.0f}<br>"
+                "Unregistered: %{customdata[5]:.1f}%<br>"
+                "<extra></extra>"
+            ),
+            marker_opacity=0.7,
+            marker_line_width=1,
+            marker_line_color='white',
+            showscale=True,
+            colorbar=dict(title=dict(text='% Unregistered'), thickness=15, len=0.7),
+            zmin=0,
+            zmax=60
+        ))
+        
+        fig.update_layout(
+            title=dict(
+                text="Eligible but Unregistered Voters by County",
+                font=dict(size=24, color='#16003f'),
+                x=0.5,
+                xanchor='center'
+            ),
+            mapbox=dict(
+                style='carto-positron',
+                center=dict(lat=35.5, lon=-79.5),
+                zoom=6
+            ),
+            height=700,
+            margin=dict(l=0, r=0, t=60, b=0),
+            font=dict(family='Arial, sans-serif')
+        )
+        
+        output_path = OUTPUT_DIR / 'maps' / output_filename
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        config = {
+            'displayModeBar': True,
+            'scrollZoom': True,
+            'modeBarButtonsToRemove': ['select2d', 'lasso2d', 'toImage', 
+                                      'zoom2d', 'pan2d', 'zoomIn2d', 
+                                      'zoomOut2d', 'autoScale2d', 'resetScale2d'],
+            'displaylogo': False
+        }
+        
+        fig.write_html(str(output_path), config=config)
+        logger.info(f"Unregistered Voters map created: {output_path}")
+        return output_path
+        
+    except Exception as e:
+        logger.error(f"Failed to create Unregistered Voters map: {e}", exc_info=True)
+        return None
+
+
+
 def create_all_maps():
     """Generate all 4 main maps."""
     results = {
         'total': create_total_voters_map(),
         'party': create_party_map(),
         'race': create_race_map(),
-        'gender': create_gender_map()
+        'gender': create_gender_map(),
+        'unregistered': create_unregistered_voters_map()
     }
     
     success_count = sum(1 for r in results.values() if r is not None)
@@ -656,6 +855,8 @@ def main():
         create_race_map()
     elif args.layer == 'gender':
         create_gender_map()
+    elif args.layer == 'unregistered':
+        create_unregistered_voters_map()
     
     logger.info("Map generation complete")
 

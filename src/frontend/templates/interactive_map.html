@@ -114,7 +114,7 @@
                 <a href="{{ url_for('index') }}">← Back to Home</a>
             </div>
             <h1>Interactive County Map</h1>
-            <p class="tagline">Explore voter registration data with multiple layers and interactive features</p>
+            <p class="tagline">Explore voter registration data across NC's 100 counties</p>
         </div>
     </header>
 
@@ -128,6 +128,10 @@
                         <a href="{{ url_for('interactive_map', layer='total') }}" 
                            class="layer-btn {% if layer == 'total' %}active{% endif %}">
                             Total Voters
+                        </a>
+                        <a href="{{ url_for('interactive_map', layer='unregistered') }}" 
+                            class="layer-btn {% if layer == 'unregistered' %}active{% endif %}">
+                            Eligible but Unregistered
                         </a>
                         <a href="{{ url_for('interactive_map', layer='party') }}" 
                            class="layer-btn {% if layer == 'party' %}active{% endif %}">
@@ -161,14 +165,46 @@
 
         <section class="coming-soon">
             <div class="container">
-                <h2>Coming Soon: Precinct-Level Views</h2>
-                <p>We're developing advanced drill-down features that will allow you to:</p>
+                <h2>Understanding the Data</h2>
+                <p>The data these maps represent is taken from the <a href="https://www.ncsbe.gov/results-data">NCSBE</a>, 
+                    the <a href="https://worldpopulationreview.com/us-counties/north-carolina">World Population Review</a> for population data, 
+                    and a <a href="https://southerncoalition.org/resources/missing-voters-report/">Southern Coalition for Social Justice</a> 2025 report on North Carolina's 'missing' voters. 
+                </p>
+                <h5>Note: Not all maps are scaled equally. For example, some political parties in North Carolina have very few or even zero registered voters in some counties. 
+                    For example, some maps may be scaled 0% to 100% of the population of a given county, while others may be scaled only 0% to 5%. 
+                    Rescaling provides a visualization that better distinguishes between 
+                    counties with relatively higher or lower percentages of registrants who identified with the selected measurement (ie 'Republican' or 'Male').
+                    View the gradient information section on the right side of the map to see each map's scale. </h5>
+                    <p></p>
                 <ul>
-                    <li>Click on any county to view precinct-level data within that county</li>
-                    <li>See detailed party breakdowns for each precinct</li>
-                    <li>Compare registration patterns between adjacent precincts</li>
-                    <li>View historical changes in precinct-level registration</li>
-                    <li>Export precinct data for your own analysis</li>
+                    <h3>Total Voters</h3>
+                    <p> This map represents the total registered voters with a status of 'Active' or 'Inactive'. The other available
+                        statuses are 'Denied', 'Removed', or 'Temporary', of which only 'Temporary' registrants are able to vote and are typically military or
+                        overseas. Active and inactive registrants are eligible to vote in North Carolina elections. </p>
+                    <h3>Eligible but Unregistered</h3>
+                    <p> This map visualizes the Eligible Voting Population (EVP), or the population of people who are eligible to register to vote and vote in North Carolina, 
+                        but do not appear in the voter file as Active or Inactive. These people either have not registered to vote, had their registration 
+                        application rejected, or were removed from the voter file, but are still eligible to register to vote and vote in North Carolina. 
+                        The EVP is a useful metric for measuring a true turnout rate as the different between the population of voters and the population of people who 
+                        could vote. 
+                    </p>
+                    <h3>Partisan Affiliation</h3>
+                    <p> These maps show the percentage of registrants in each county who chose on their voter registration application to affiliate 
+                        with one of the registered political parties in North Carolina or as Unaffiliated (Independent of any political party). The current
+                        registered political parties in North Carolina are: Democrat, Republican, Libertarian, and Green. Some voters registered with the Constitution
+                        party remain in the voter file, but that party failed to renew its registration with the NCSBE. Statistics that 
+                        show the total registrants for these parties and other information can be found on the <a href="{{ url_for('party_page') }}">Voter Demographics</a> page.
+                    </p>
+                    <h3>Race</h3>
+                    <p>
+                        This map shows the percentage of registrants in each county who identified with a race or ethnicity on their voter registration application, and 
+                        those who did not (undesignated). The NC voter registration application includes seven racial categories: White, Black, Asian, Native American,
+                        Pacific Islander, Multiracial, and Other. 
+                    </p>
+                    <h3>Gender</h3>
+                    <p>This map shows the percentage of registrants in each county who identified with a gender on their voter registration application, and 
+                        those who did not (undesignated). The NC voter registration application includes two gender categories: Male and Female. 
+                    </p>
                 </ul>
             </div>
         </section>
