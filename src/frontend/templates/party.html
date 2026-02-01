@@ -5,6 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voter Demographics - NC Elections Transparency Project</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .demo-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .demo-card h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #634ea3;
+            padding-bottom: 0.5rem;
+        }
+        
+        .chart-container {
+            width: 100%;
+            height: 550px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .chart-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .section-divider {
+            margin: 3rem 0;
+            border-top: 3px solid #634ea3;
+            position: relative;
+        }
+        
+        .section-divider h2 {
+            background: white;
+            display: inline-block;
+            padding: 0 1rem;
+            position: relative;
+            top: -1.2rem;
+            color: #634ea3;
+        }
+        
+        .demo-card p {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
     <nav>
@@ -23,117 +80,126 @@
                 <a href="{{ url_for('index') }}">← Back to Home</a>
             </div>
             <h1>Voter Demographics</h1>
-            <p class="tagline">Political party affiliation across North Carolina</p>
+            <p class="tagline">Interactive demographic analysis of North Carolina voter registration</p>
         </div>
     </header>
 
     <main>
-        {% if chart_exists %}
         <section class="detail-section">
             <div class="container">
-                <div class="detail-grid">
-                    <div class="detail-chart">
-                        <img src="{{ url_for('serve_chart', filename='party_breakdown.png') }}" 
-                             alt="Voter Registration by Party"
-                             class="chart-image-large">
-                    </div>
-
-                    <div class="detail-info">
-                        <h2>Party Registration Analysis</h2>
-                        <p>
-                            This comprehensive breakdown shows the distribution of registered voters 
-                            across political parties in North Carolina. Party registration provides 
-                            insight into the state's political landscape, though it doesn't necessarily 
-                            predict voting behavior.
-                        </p>
-
-                        <div class="info-grid">
-                            {% if stats %}
-                            <div class="stats-panel">
-                                <h3>Party Affiliation Key Statistics</h3>
-                                <div class="stat-item">
-                                    <span class="stat-label">Total Registered Voters</span>
-                                    <span class="stat-value1">{{ "{:,}".format(stats.total) }}</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">Largest Party Affiliation</span>
-                                    <span class="stat-value2">Unaffiliated</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">Top Party Registrations</span>
-                                    <span class="stat-value1">{{ "{:,}".format(stats.top_count) }}</span>
-                                </div>
-                            </div>
-
-                            <div class="party-breakdown">
-                                <h3>Complete Party Distribution</h3>
-                                {% for party in stats.parties %}
-                                <div class="party-item">
-                                    <div class="party-header">
-                                        <span class="party-name">{{ party.party }}</span>
-                                        <span class="party-count">{{ "{:,}".format(party.total) }}</span>
-                                    </div>
-                                    <div class="party-bar">
-                                        <div class="party-bar-fill" 
-                                             style="width: {{(party.total / stats.total * 100)|round(1)}}%"></div>
-                                    </div>
-                                    <span class="party-percent">{{ (party.total / stats.total * 100)|round(1) }}% of total registrations</span>
-                                </div>
-                                {% endfor %}
-                            </div>
-                            {% endif %}
+                
+                <!-- Overall Demographics -->
+                <div class="section-divider">
+                    <h2>Overall Demographics</h2>
+                </div>
+                
+                <div class="demo-grid">
+                    <div class="demo-card">
+                        <h3>Party Affiliation</h3>
+                        <div class="chart-container">
+                            <iframe src="{{ url_for('serve_chart', filename='party_breakdown.html') }}"></iframe>
                         </div>
-
-                        <div class="insight-box">
-                            <h3>Understanding Party Registration</h3>
-                            <p>
-                                Party registration does not necessarily indicate voting behavior. Many 
-                                registered voters vote across party lines, and unaffiliated voters 
-                                represent a significant and growing portion of the electorate who may 
-                                lean toward either major party or remain truly independent.
-                            </p>
+                    </div>
+                    
+                    <div class="demo-card">
+                        <h3>Gender Distribution</h3>
+                        <div class="chart-container">
+                            <iframe src="{{ url_for('serve_chart', filename='gender_breakdown.html') }}"></iframe>
+                        </div>
+                    </div>
+                    
+                    <div class="demo-card">
+                        <h3>Age Groups</h3>
+                        <div class="chart-container">
+                            <iframe src="{{ url_for('serve_chart', filename='age_breakdown.html') }}"></iframe>
+                        </div>
+                    </div>
+                    
+                    <div class="demo-card">
+                        <h3>Racial Demographics</h3>
+                        <div class="chart-container">
+                            <iframe src="{{ url_for('serve_chart', filename='race_breakdown.html') }}"></iframe>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        <section class="coming-soon">
-            <div class="container">
-                <h2>Expanding Party Analysis</h2>
-                <p>We're continually adding new features to provide deeper insights into party registration patterns:</p>
-                <ul>
-                    <li>Historical party registration trends showing shifts over time</li>
-                    <li>County-level party distribution maps and comparative analysis</li>
-                    <li>Demographic breakdowns within each party (age, gender, race)</li>
-                    <li>Age cohort analysis by party affiliation</li>
-                    <li>Gender distribution patterns across parties</li>
-                    <li>Comparative analysis across election cycles</li>
-                    <li>Party switching trends and registration changes</li>
-                </ul>
-            </div>
-        </section>
-        {% else %}
-        <section class="detail-section">
-            <div class="container">
-                <div class="alert alert-warning">
-                    <strong>Visualization Not Available</strong>
-                    <p>The party breakdown chart has not been generated yet. Please run the visualization scripts to create this analysis.</p>
+                <!-- Party Cross-Analysis -->
+                <div class="section-divider">
+                    <h2>Party Affiliation by Demographics</h2>
                 </div>
+                
+                <div class="demo-grid">
+                    <div class="demo-card">
+                        <h3>Party by Race</h3>
+                        <div class="chart-container">
+                            <iframe src="{{ url_for('serve_chart', filename='party_by_race.html') }}"></iframe>
+                        </div>
+                        <p>Distribution of party affiliation across different racial groups. Hover to see exact counts.</p>
+                    </div>
+                    
+                    <div class="demo-card">
+                        <h3>Party by Gender</h3>
+                        <div class="chart-container">
+                            <iframe src="{{ url_for('serve_chart', filename='party_by_gender.html') }}"></iframe>
+                        </div>
+                        <p>Comparison of party registration between male and female voters.</p>
+                    </div>
+                    
+                    <div class="demo-card">
+                        <h3>Party by Age Group</h3>
+                        <div class="chart-container">
+                            <iframe src="{{ url_for('serve_chart', filename='party_by_age.html') }}"></iframe>
+                        </div>
+                        <p>How party affiliation varies across different age groups.</p>
+                    </div>
+                </div>
+
+                <!-- Gender Cross-Analysis -->
+                <div class="section-divider">
+                    <h2>Gender Demographics</h2>
+                </div>
+                
+                <div class="demo-grid">
+                    <div class="demo-card">
+                        <h3>Gender by Age Group</h3>
+                        <div class="chart-container">
+                            <iframe src="{{ url_for('serve_chart', filename='gender_by_age.html') }}"></iframe>
+                        </div>
+                        <p>Gender distribution across different age demographics.</p>
+                    </div>
+                    
+                    <div class="demo-card">
+                        <h3>Gender by Race</h3>
+                        <div class="chart-container">
+                            <iframe src="{{ url_for('serve_chart', filename='gender_by_race.html') }}"></iframe>
+                        </div>
+                        <p>Gender composition within different racial groups.</p>
+                    </div>
+                </div>
+
+                <!-- Key Insights -->
+                <div class="insight-box" style="margin-top: 3rem;">
+                    <h3>Using Interactive Charts</h3>
+                    <p>
+                        <strong>Hover</strong> over any chart element to see detailed numbers and percentages.
+                        <strong>Click and drag</strong> on bar charts to zoom in on specific ranges.
+                        <strong>Double-click</strong> to reset the view.
+                        Click legend items to show/hide specific categories.
+                    </p>
+                    <p style="margin-top: 1rem;">
+                        These visualizations provide a comprehensive view of North Carolina's registered 
+                        voter population across multiple demographic dimensions. The cross-demographic 
+                        analyses reveal how different communities engage with the electoral process.
+                    </p>
+                </div>
+
             </div>
         </section>
-        {% endif %}
     </main>
 
     <footer>
         <div class="container">
-            <p>
-                Data source: 
-                <a href="https://www.ncsbe.gov/" target="_blank" rel="noopener">
-                    NC State Board of Elections
-                </a>
-            </p>
-            <p>&copy; 2026 NC Elections Transparency Project</p>
+            <p>&copy; 2024 NC Elections Transparency Project. Data sourced from NC State Board of Elections.</p>
         </div>
     </footer>
 </body>

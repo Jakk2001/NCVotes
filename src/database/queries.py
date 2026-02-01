@@ -9,6 +9,173 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+def get_party_by_race(engine: Engine) -> pd.DataFrame:
+    """Get voter registration counts by party and race."""
+    query = """
+    SELECT 
+        party_cd as party,
+        race_code as race,
+        COUNT(*) as total
+    FROM raw.raw_voters
+    WHERE status_cd IN ('A', 'I')
+    GROUP BY party_cd, race_code
+    ORDER BY party_cd, total DESC;
+    """
+    try:
+        return pd.read_sql(query, engine)
+    except Exception as e:
+        logger.error(f"Failed to fetch party by race: {e}")
+        raise
+
+def get_party_by_gender(engine: Engine) -> pd.DataFrame:
+    """Get voter registration counts by party and gender."""
+    query = """
+    SELECT 
+        party_cd as party,
+        gender_code as gender,
+        COUNT(*) as total
+    FROM raw.raw_voters
+    WHERE status_cd IN ('A', 'I')
+    GROUP BY party_cd, gender_code
+    ORDER BY party_cd, total DESC;
+    """
+    try:
+        return pd.read_sql(query, engine)
+    except Exception as e:
+        logger.error(f"Failed to fetch party by gender: {e}")
+        raise
+
+def get_party_by_age_group(engine: Engine) -> pd.DataFrame:
+    """Get voter registration counts by party and age group."""
+    query = """
+    SELECT 
+        party_cd as party,
+        age_group,
+        COUNT(*) as total
+    FROM raw.raw_voters
+    WHERE status_cd IN ('A', 'I')
+      AND age_group IS NOT NULL
+      AND age_group != 'Unknown'
+    GROUP BY party_cd, age_group
+    ORDER BY party_cd, 
+             CASE age_group
+                WHEN '18-25' THEN 1
+                WHEN '26-35' THEN 2
+                WHEN '36-50' THEN 3
+                WHEN '51-65' THEN 4
+                WHEN '65+' THEN 5
+             END;
+    """
+    try:
+        return pd.read_sql(query, engine)
+    except Exception as e:
+        logger.error(f"Failed to fetch party by age group: {e}")
+        raise
+
+def get_gender_breakdown(engine: Engine) -> pd.DataFrame:
+    """Get voter registration counts by gender."""
+    query = """
+    SELECT 
+        gender_code as gender,
+        COUNT(*) as total
+    FROM raw.raw_voters
+    WHERE status_cd IN ('A', 'I')
+    GROUP BY gender_code
+    ORDER BY total DESC;
+    """
+    try:
+        return pd.read_sql(query, engine)
+    except Exception as e:
+        logger.error(f"Failed to fetch gender breakdown: {e}")
+        raise
+
+def get_gender_by_age_group(engine: Engine) -> pd.DataFrame:
+    """Get voter registration counts by gender and age group."""
+    query = """
+    SELECT 
+        gender_code as gender,
+        age_group,
+        COUNT(*) as total
+    FROM raw.raw_voters
+    WHERE status_cd IN ('A', 'I')
+      AND age_group IS NOT NULL
+      AND age_group != 'Unknown'
+    GROUP BY gender_code, age_group
+    ORDER BY gender_code,
+             CASE age_group
+                WHEN '18-25' THEN 1
+                WHEN '26-35' THEN 2
+                WHEN '36-50' THEN 3
+                WHEN '51-65' THEN 4
+                WHEN '65+' THEN 5
+             END;
+    """
+    try:
+        return pd.read_sql(query, engine)
+    except Exception as e:
+        logger.error(f"Failed to fetch gender by age group: {e}")
+        raise
+
+def get_gender_by_race(engine: Engine) -> pd.DataFrame:
+    """Get voter registration counts by gender and race."""
+    query = """
+    SELECT 
+        gender_code as gender,
+        race_code as race,
+        COUNT(*) as total
+    FROM raw.raw_voters
+    WHERE status_cd IN ('A', 'I')
+    GROUP BY gender_code, race_code
+    ORDER BY gender_code, total DESC;
+    """
+    try:
+        return pd.read_sql(query, engine)
+    except Exception as e:
+        logger.error(f"Failed to fetch gender by race: {e}")
+        raise
+
+def get_age_group_breakdown(engine: Engine) -> pd.DataFrame:
+    """Get voter registration counts by age group."""
+    query = """
+    SELECT 
+        age_group,
+        COUNT(*) as total
+    FROM raw.raw_voters
+    WHERE status_cd IN ('A', 'I')
+      AND age_group IS NOT NULL
+      AND age_group != 'Unknown'
+    GROUP BY age_group
+    ORDER BY CASE age_group
+                WHEN '18-25' THEN 1
+                WHEN '26-35' THEN 2
+                WHEN '36-50' THEN 3
+                WHEN '51-65' THEN 4
+                WHEN '65+' THEN 5
+             END;
+    """
+    try:
+        return pd.read_sql(query, engine)
+    except Exception as e:
+        logger.error(f"Failed to fetch age group breakdown: {e}")
+        raise
+
+def get_race_breakdown(engine: Engine) -> pd.DataFrame:
+    """Get voter registration counts by race."""
+    query = """
+    SELECT 
+        race_code as race,
+        COUNT(*) as total
+    FROM raw.raw_voters
+    WHERE status_cd IN ('A', 'I')
+    GROUP BY race_code
+    ORDER BY total DESC;
+    """
+    try:
+        return pd.read_sql(query, engine)
+    except Exception as e:
+        logger.error(f"Failed to fetch race breakdown: {e}")
+        raise
+
 def get_registration_by_party(engine: Engine) -> pd.DataFrame:
     """
     Get total voter registration counts by party.
