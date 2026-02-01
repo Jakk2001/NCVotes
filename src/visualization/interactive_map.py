@@ -167,7 +167,10 @@ def create_party_map(output_filename='interactive_map_party.html'):
             locations=merged.index,
             z=merged['dem_pct'],
             customdata=customdata,
-            colorscale='Blues',
+            colorscale= ["Blues"],
+            coloraxis=dict(cmin=0, cmax=100),
+            zmin=0,           
+            zmax=100,
             hovertemplate=(
                 "<b>%{customdata[0]}</b><br>"
                 "Total Voters: %{customdata[1]:,.0f}<br>"
@@ -179,8 +182,6 @@ def create_party_map(output_filename='interactive_map_party.html'):
             marker_line_color='white',
             showscale=True,
             colorbar=dict(title=dict(text='% Democrat'), thickness=15, len=0.7),
-            zmin=0,
-            zmax=100
         ))
         
         # Add dropdown menu to switch between all parties
@@ -191,10 +192,10 @@ def create_party_map(output_filename='interactive_map_party.html'):
                         dict(
                             args=[{
                                 "z": [merged['dem_pct']], 
-                                "colorscale": ["Blues"], 
-                                "colorbar.title.text": "% Democrat",
-                                "zmin": 0,
+                                "colorscale": ["Blues"],
+                                "zmin": 0,       
                                 "zmax": 100,
+                                "colorbar.title.text": "% Democrat",
                                 "hovertemplate": "<b>%{customdata[0]}</b><br>Total Voters: %{customdata[1]:,.0f}<br>Democrat: %{customdata[2]:.1f}%<br><extra></extra>"
                             }],
                             label="% Democrat",
