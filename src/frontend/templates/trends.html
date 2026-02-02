@@ -85,15 +85,208 @@
     <main>
         <section class="detail-section">
             <div class="container">
-                <div class="detail-info">
-                    <h2>Understanding Electoral Growth</h2>
-                    <p>
-                        These interactive visualizations track the evolution of voter registration 
-                        in North Carolina across multiple demographic dimensions. Explore how party 
-                        affiliation, age groups, gender, and race have changed over time, revealing 
-                        critical patterns in civic engagement and electoral participation.
-                    </p>
-                </div>
+
+                <!-- Add this section after the page header and before the trend charts -->
+
+                {% if stats %}
+                <section class="key-stats-section">
+                    <div class="container">
+                        <div class="section-divider">
+                            <h2>Key Statistics</h2>
+                        </div>
+                        
+                        <div class="stats-intro">
+                            <p>Track new voter registrations and demographic trends across multiple timeframes. These metrics show how many new voters have registered since key dates.</p>
+                        </div>
+
+                        <!-- Current Total -->
+                        <div class="stats-summary" style="margin-bottom: 2rem;">
+                            <p><strong>Current Total Registered Voters:</strong> {{ '{:,}'.format(stats.current_total) }}</p>
+                        </div>
+
+                        <!-- New Registrations by Period -->
+                        <div class="stat-category">
+                            <h3>New Registrations by Timeframe</h3>
+                            <div class="stat-table-wrapper">
+                                <table class="stat-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Since</th>
+                                            <th>New Registrations</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for period, count in stats.new_registrations.items() %}
+                                        <tr>
+                                            <td>{{ period.replace('_', ' ').title() }}</td>
+                                            <td>{{ '{:,}'.format(count) }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Party Breakdown of New Registrations -->
+                        <div class="stat-category">
+                            <h3>New Registrations by Party</h3>
+                            <p class="stat-note">Party affiliation of voters who registered in each timeframe</p>
+                            
+                            {% for period, parties in stats.party_new_regs.items() %}
+                            <div class="period-group">
+                                <h4>Since {{ period.replace('_', ' ').title() }}</h4>
+                                <div class="stat-table-wrapper">
+                                    <table class="stat-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Party</th>
+                                                <th>New Registrations</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for party in parties %}
+                                            <tr>
+                                                <td>{{ party.party }}</td>
+                                                <td>{{ '{:,}'.format(party.total) }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Age Group Breakdown of New Registrations -->
+                        <div class="stat-category">
+                            <h3>New Registrations by Age Group</h3>
+                            <p class="stat-note">Age group distribution of voters who registered in each timeframe</p>
+                            
+                            {% for period, groups in stats.age_new_regs.items() %}
+                            <div class="period-group">
+                                <h4>Since {{ period.replace('_', ' ').title() }}</h4>
+                                <div class="stat-table-wrapper">
+                                    <table class="stat-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Age Group</th>
+                                                <th>New Registrations</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for group in groups %}
+                                            <tr>
+                                                <td>{{ group.age_group }}</td>
+                                                <td>{{ '{:,}'.format(group.total) }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
+                {% endif %}
+
+                <style>
+                .key-stats-section {
+                    background: #f8f9fa;
+                    padding: 3rem 0;
+                    margin: 2rem 0;
+                }
+
+                .stats-intro {
+                    margin: 1.5rem 0 2rem 0;
+                    font-size: 1.05rem;
+                    color: #555;
+                }
+
+                .stat-category {
+                    background: white;
+                    border-radius: 8px;
+                    padding: 1.5rem;
+                    margin: 2rem 0;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                }
+
+                .stat-category h3 {
+                    color: #634ea3;
+                    margin-top: 0;
+                    margin-bottom: 0.5rem;
+                    border-bottom: 2px solid #634ea3;
+                    padding-bottom: 0.5rem;
+                }
+
+                .stat-note {
+                    font-size: 0.9rem;
+                    color: #666;
+                    font-style: italic;
+                    margin: 0.5rem 0 1rem 0;
+                }
+
+                .period-group {
+                    margin: 1.5rem 0;
+                }
+
+                .period-group h4 {
+                    color: #2c3e50;
+                    margin-bottom: 0.75rem;
+                    font-size: 1rem;
+                }
+
+                .stat-table-wrapper {
+                    overflow-x: auto;
+                }
+
+                .stat-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 0;
+                }
+
+                .stat-table thead {
+                    background: #634ea3;
+                    color: white;
+                }
+
+                .stat-table th {
+                    padding: 0.75rem;
+                    text-align: left;
+                    font-weight: 600;
+                }
+
+                .stat-table td {
+                    padding: 0.75rem;
+                    border-bottom: 1px solid #ddd;
+                }
+
+                .stat-table tbody tr:hover {
+                    background: #f5f5f5;
+                }
+
+                .stats-summary {
+                    background: #634ea3;
+                    color: white;
+                    padding: 1rem;
+                    border-radius: 8px;
+                    text-align: center;
+                    font-size: 1.1rem;
+                }
+
+                @media (max-width: 768px) {
+                    .stat-table {
+                        font-size: 0.85rem;
+                    }
+                    
+                    .stat-table th,
+                    .stat-table td {
+                        padding: 0.5rem;
+                    }
+                }
+                </style>
+
 
                 <div class="section-divider">
                     <h2>Overall Trends</h2>

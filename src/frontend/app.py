@@ -26,6 +26,51 @@ logger = logging.getLogger(__name__)
 template_dir = PROJECT_ROOT / "src" / "frontend" / "templates"
 static_dir = PROJECT_ROOT / "src" / "frontend" / "static"
 
+_trends_stats_cache = {
+    'data': None,
+    'timestamp': None,
+    'ttl_minutes': 60  # Cache for 1 hour
+}
+
+@app.route("/trends")
+def trends_page():
+    """Dedicated page for registration trends visualization with cached key stats."""
+    try:
+        from src.database.queries_key_stats import get_key_stats
+        
+        chart_exists = (CHARTS_DIR / "registration_trends.png").exists()
+        
+        # Check if we have cached stats that are still valid
+        cache = _trends_stats_cache
+        now = datetime.now()
+        
+        if (cache['data'] is not None and 
+            cache['timestamp'] is not None and 
+            (now - cache['timestamp']).total_seconds() < cache['ttl_minutes'] * 60):
+            # Use cached data
+            logger.info("Using cached trends stats")
+            stats = cache['data']
+        else:
+            # Generate fresh stats and cache them
+            logger.info("Generating fresh trends stats...")
+            engine = get_engine()
+            stats = get_key_stats(engine)
+            
+            # Update cache
+            cache['data'] = stats
+            cache['timestamp'] = now
+            logger.info("Trends stats cached")
+        
+        return render_template(
+            "trends.html",
+            chart_exists=chart_exists,
+            stats=stats
+        )
+    except Exception as e:
+        logger.error(f"Error rendering trends page: {e}")
+        return f"Error: {e}", 500
+
+
 app = Flask(
     __name__,
     template_folder=str(template_dir),
@@ -88,14 +133,37 @@ def party_page():
         logger.error(f"Error rendering party page: {e}")
         return f"Error: {e}", 500
 
+# Add this temporarily to your trends_page() route in app.py
+
 @app.route("/trends")
 def trends_page():
-    """Dedicated page for registration trends visualization."""
     try:
+        from src.database.queries_key_stats import get_key_stats
+        from src.database.queries import get_registration_by_party  # Import working query
+        
+        engine = get_engine()
+        
+        # Test both queries with same engine
+        print("=== DIAGNOSTIC ===")
+        print(f"Engine: {engine}")
+        print(f"Connection string: {engine.url}")
+        
+        # Use working query
+        working_df = get_registration_by_party(engine)
+        working_total = working_df['total'].sum()
+        print(f"Working query total: {working_total:,}")
+        
+        # Use trends query  
+        stats = get_key_stats(engine)
+        print(f"Trends query total: {stats['current_total']:,}")
+        print("==================")
+        
         chart_exists = (CHARTS_DIR / "registration_trends.png").exists()
+        
         return render_template(
             "trends.html",
-            chart_exists=chart_exists
+            chart_exists=chart_exists,
+            stats=stats
         )
     except Exception as e:
         logger.error(f"Error rendering trends page: {e}")

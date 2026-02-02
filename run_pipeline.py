@@ -12,7 +12,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 from src.scraper import registration as scraper_reg
 from src.scraper import results as scraper_res
 from src.etl import load_raw_voters
-from src.visualization import demographics, trends, choropleth
+from src.visualization import demographics, trends
+from src.visualization.interactive_map import create_all_maps
 from src.database.connection import test_connection
 
 logging.basicConfig(
@@ -53,26 +54,29 @@ def run_full_pipeline():
         return False
     logger.info("✓ Raw voter data loaded successfully")
     
-    # Step 4: Generate demographics visualization
-    logger.info("\n[4/7] Generating demographics visualization...")
-    if not demographics.plot_party_breakdown():
-        logger.warning("Demographics visualization failed (non-critical)")
-    else:
-        logger.info("✓ Demographics visualization created")
+    # Step 4: Generate demographics visualizations
+    logger.info("\n[4/7] Generating demographics visualizations...")
+    try:
+        demographics.generate_all_demographics_charts()
+        logger.info("✓ Demographics visualizations created")
+    except Exception as e:
+        logger.warning(f"Demographics visualization failed (non-critical): {e}")
     
-    # Step 5: Generate trends visualization
-    logger.info("\n[5/7] Generating trends visualization...")
-    if not trends.plot_registration_trends():
-        logger.warning("Trends visualization failed (non-critical)")
-    else:
-        logger.info("✓ Trends visualization created")
+    # Step 5: Generate trends visualizations
+    logger.info("\n[5/7] Generating trends visualizations...")
+    try:
+        trends.generate_all_trends()
+        logger.info("✓ Trends visualizations created")
+    except Exception as e:
+        logger.warning(f"Trends visualization failed (non-critical): {e}")
     
-    # Step 6: Generate choropleth visualization
-    logger.info("\n[6/7] Generating county map visualization...")
-    if not choropleth.plot_registration_choropleth():
-        logger.warning("Choropleth visualization failed (non-critical)")
-    else:
-        logger.info("✓ County map visualization created")
+    # Step 6: Generate interactive maps
+    logger.info("\n[6/7] Generating interactive county maps...")
+    try:
+        create_all_maps()
+        logger.info("✓ Interactive maps created")
+    except Exception as e:
+        logger.warning(f"Interactive map generation failed (non-critical): {e}")
     
     # Step 7: Start Flask web server
     logger.info("\n[7/7] Starting Flask web server...")
@@ -123,9 +127,26 @@ def run_visualizations_only():
     """Run only the visualization generation steps."""
     logger.info("Running visualizations only...")
     
-    demographics.plot_party_breakdown()
-    trends.plot_registration_trends()
-    choropleth.plot_registration_choropleth()
+    logger.info("[1/3] Generating demographics charts...")
+    try:
+        demographics.generate_all_demographics_charts()
+        logger.info("✓ Demographics complete")
+    except Exception as e:
+        logger.error(f"Demographics failed: {e}")
+    
+    logger.info("[2/3] Generating trends charts...")
+    try:
+        trends.generate_all_trends()
+        logger.info("✓ Trends complete")
+    except Exception as e:
+        logger.error(f"Trends failed: {e}")
+    
+    logger.info("[3/3] Generating interactive maps...")
+    try:
+        create_all_maps()
+        logger.info("✓ Maps complete")
+    except Exception as e:
+        logger.error(f"Maps failed: {e}")
     
     logger.info("Visualizations complete")
 
