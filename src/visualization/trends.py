@@ -339,13 +339,35 @@ def plot_cumulative_total():
     except Exception as e:
         logger.error(f"Failed to create cumulative registration: {e}")
         return False
+    
+def generate_key_stats():
+    """Generate key statistics and save to JSON file for fast page loads."""
+    try:
+        from src.database.queries_key_stats import get_key_stats
+        import json
+        
+        logger.info("Generating key statistics...")
+        engine = get_engine()
+        stats = get_key_stats(engine)
+        
+        # Save to JSON file
+        stats_file = CHARTS_DIR / 'trends_key_stats.json'
+        with open(stats_file, 'w') as f:
+            json.dump(stats, f, indent=2)
+        
+        logger.info(f"✓ Key statistics saved to {stats_file}")
+        return True
+        
+    except Exception as e:
+        logger.error(f"Failed to generate key statistics: {e}")
+        return False
 
 def generate_all_trends():
-    """Generate all trend visualizations."""
+    """Generate all trend visualizations and key statistics."""
     logger.info("Generating all trend visualizations...")
     
     success_count = 0
-    total_count = 6
+    total_count = 7  # Updated to include key stats
     
     if plot_party_trends():
         success_count += 1
@@ -358,6 +380,8 @@ def generate_all_trends():
     if plot_weekly_registrations():
         success_count += 1
     if plot_cumulative_total():
+        success_count += 1
+    if generate_key_stats():  # ADD THIS LINE
         success_count += 1
     
     logger.info(f"Generated {success_count}/{total_count} trend visualizations")

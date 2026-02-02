@@ -32,34 +32,44 @@ _trends_stats_cache = {
     'ttl_minutes': 60  # Cache for 1 hour
 }
 
+app = Flask(
+    __name__,
+    template_folder=str(template_dir),
+    static_folder=str(static_dir)
+)
+
+
 @app.route("/trends")
 def trends_page():
-    """Dedicated page for registration trends visualization with cached key stats."""
+    """Dedicated page for registration trends visualization with pre-generated stats."""
     try:
-        from src.database.queries_key_stats import get_key_stats
+        import json
         
         chart_exists = (CHARTS_DIR / "registration_trends.png").exists()
         
-        # Check if we have cached stats that are still valid
-        cache = _trends_stats_cache
-        now = datetime.now()
+        # Read pre-generated stats from JSON file (instant load)
+        stats_file = CHARTS_DIR / 'trends_key_stats.json'
+        stats = {}
         
-        if (cache['data'] is not None and 
-            cache['timestamp'] is not None and 
-            (now - cache['timestamp']).total_seconds() < cache['ttl_minutes'] * 60):
-            # Use cached data
-            logger.info("Using cached trends stats")
-            stats = cache['data']
+        if stats_file.exists():
+            try:
+                with open(stats_file, 'r') as f:
+                    stats = json.load(f)
+                logger.info("Loaded pre-generated trends stats from JSON")
+            except Exception as e:
+                logger.warning(f"Could not load stats JSON: {e}")
+                # Fallback: get current total only (fast query)
+                engine = get_engine()
+                from src.database.queries import get_registration_by_party
+                df = get_registration_by_party(engine)
+                stats = {'current_total': int(df['total'].sum())}
         else:
-            # Generate fresh stats and cache them
-            logger.info("Generating fresh trends stats...")
+            logger.warning("Stats JSON not found, using minimal stats")
+            # Fallback: get current total only
             engine = get_engine()
-            stats = get_key_stats(engine)
-            
-            # Update cache
-            cache['data'] = stats
-            cache['timestamp'] = now
-            logger.info("Trends stats cached")
+            from src.database.queries import get_registration_by_party
+            df = get_registration_by_party(engine)
+            stats = {'current_total': int(df['total'].sum())}
         
         return render_template(
             "trends.html",
@@ -71,11 +81,6 @@ def trends_page():
         return f"Error: {e}", 500
 
 
-app = Flask(
-    __name__,
-    template_folder=str(template_dir),
-    static_folder=str(static_dir)
-)
 
 @app.route("/")
 def index():
@@ -131,42 +136,6 @@ def party_page():
         )
     except Exception as e:
         logger.error(f"Error rendering party page: {e}")
-        return f"Error: {e}", 500
-
-# Add this temporarily to your trends_page() route in app.py
-
-@app.route("/trends")
-def trends_page():
-    try:
-        from src.database.queries_key_stats import get_key_stats
-        from src.database.queries import get_registration_by_party  # Import working query
-        
-        engine = get_engine()
-        
-        # Test both queries with same engine
-        print("=== DIAGNOSTIC ===")
-        print(f"Engine: {engine}")
-        print(f"Connection string: {engine.url}")
-        
-        # Use working query
-        working_df = get_registration_by_party(engine)
-        working_total = working_df['total'].sum()
-        print(f"Working query total: {working_total:,}")
-        
-        # Use trends query  
-        stats = get_key_stats(engine)
-        print(f"Trends query total: {stats['current_total']:,}")
-        print("==================")
-        
-        chart_exists = (CHARTS_DIR / "registration_trends.png").exists()
-        
-        return render_template(
-            "trends.html",
-            chart_exists=chart_exists,
-            stats=stats
-        )
-    except Exception as e:
-        logger.error(f"Error rendering trends page: {e}")
         return f"Error: {e}", 500
 
 @app.route("/county")
