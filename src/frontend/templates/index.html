@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NC Elections Transparency Project - Voter Registration Data Visualization</title>
+    <title>NC Elections Transparency Project</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -17,43 +17,23 @@
         </div>
     </nav>
 
-    <section class="hero">
+    <header class="hero">
         <div class="container">
-            <h1>North Carolina voter data, visualized.</h1>
+            <h1>NC Elections<br>Transparency Project</h1>
             <p class="tagline">
-                Tracking voter registration trends, analyzing election patterns, and understanding 
-                North Carolina's evolving electorate through visual data.
+                Making North Carolina voter registration data accessible, transparent, and understandable
             </p>
             <a href="#data" class="hero-cta">Explore the Data</a>
         </div>
-    </section>
-
-    <section class="stats-bar">
-        <div class="container">
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <span class="stat-number">100</span>
-                    <span class="stat-label">Counties</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-number">2,632</span>
-                    <span class="stat-label">Precincts</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-number">7.8M+</span>
-                    <span class="stat-label">Registered Voters</span>
-                </div>
-            </div>
-        </div>
-    </section>
+    </header>
 
     <section class="about" id="about">
         <div class="container">
             <div class="about-content">
-                <h2>Understanding North Carolina's Electorate</h2>
+                <h2>Democracy Through Data</h2>
                 <p>
-                    The NC Elections Transparency Project provides comprehensive, data-driven insights into voter registration 
-                    and electoral patterns across North Carolina. Our platform aggregates official 
+                    Understanding who is registered to vote—and who isn't—is fundamental to 
+                    a functioning democracy. Our platform aggregates official 
                     data from the NC State Board of Elections, making complex electoral information 
                     accessible and understandable.
                 </p>
@@ -85,6 +65,8 @@
                 <!-- Interactive Map Card -->
                 <a href="{{ url_for('interactive_map') }}" class="viz-card">
                     <h3>Interactive County Map</h3>
+                    <img src="{{ url_for('serve_chart', filename='county_choropleth.png') }}" 
+                             alt="Voter Demographics">
                     <div class="viz-card-content">
                         <p class="viz-description">
                             Explore voter registration with interactive maps featuring multiple data 
@@ -129,24 +111,6 @@
                     </div>
                 </a>
                 {% endif %}
-
-                {% if charts.county %}
-                <a href="{{ url_for('county_page') }}" class="viz-card">
-                    <h3>Geographic Distribution</h3>
-                    <div class="viz-preview">
-                        <img src="{{ url_for('serve_chart', filename='county_choropleth.png') }}" 
-                             alt="County Registration Map">
-                    </div>
-                    <div class="viz-card-content">
-                        <p class="viz-description">
-                            Interactive mapping of voter registration across all 100 North Carolina 
-                            counties. Discover regional patterns and urban-rural divides in 
-                            registration density.
-                        </p>
-                        <span class="viz-link">View Full Analysis</span>
-                    </div>
-                </a>
-                {% endif %}
             </div>
             {% else %}
             <div class="alert alert-warning">
@@ -168,32 +132,33 @@
                         and helps identify potential issues in the registration system.
                     </p>
                 </div>
+
                 <div class="reason-item">
-                    <h3>Research</h3>
+                    <h3>Engagement</h3>
                     <p>
-                        Academics, journalists, and policy researchers rely on accurate voter 
-                        data to understand electoral trends and inform public discourse.
+                        Understanding registration patterns helps organizations and campaigns 
+                        target outreach efforts to underrepresented communities.
                     </p>
                 </div>
-                <div class="reason-item">
-                    <h3>Civic Engagement</h3>
-                    <p>
-                        Understanding registration patterns helps organizations target voter 
-                        registration drives and get-out-the-vote efforts more effectively.
-                    </p>
-                </div>
+
                 <div class="reason-item">
                     <h3>Accountability</h3>
                     <p>
-                        Data-driven insights hold election officials accountable and
-                        supports the fight against illegal gerrymandering efforts.
+                        Data-driven insights hold election officials accountable and help 
+                        identify disparities in registration access.
+                    </p>
+                </div>
+
+                <div class="reason-item">
+                    <h3>Research</h3>
+                    <p>
+                        Academic researchers, journalists, and advocates use this data to study 
+                        electoral trends and inform policy decisions.
                     </p>
                 </div>
             </div>
         </div>
     </section>
-
-   
 
     <footer>
         <div class="container">
@@ -203,8 +168,7 @@
                     NC State Board of Elections
                 </a>
             </p>
-
-            <p>&copy; 2026 NC Elections Transparency Project </p>
+            <p>&copy; 2026 NC Elections Transparency Project</p>
         </div>
     </footer>
 </body>
