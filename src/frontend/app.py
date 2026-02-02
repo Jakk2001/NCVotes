@@ -9,7 +9,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from flask import Flask, render_template, send_from_directory, jsonify
+from flask import Flask, render_template, send_from_directory, send_file, jsonify
 import logging
 from datetime import datetime
 from src.database.connection import get_engine, test_connection
@@ -174,12 +174,25 @@ def serve_map(filename):
 
 @app.route("/charts/<filename>")
 def serve_chart(filename):
-    """Serve chart images from the outputs directory."""
+    """Serve chart files (PNG or HTML)."""
     try:
-        return send_from_directory(CHARTS_DIR, filename)
-    except FileNotFoundError:
-        logger.warning(f"Chart not found: {filename}")
-        return "Chart not found", 404
+        file_path = CHARTS_DIR / filename
+        
+        if not file_path.exists():
+            logger.warning(f"Chart not found: {filename}")
+            return "Chart not found", 404
+        
+        # Determine MIME type based on extension
+        if filename.endswith('.html'):
+            return send_file(file_path, mimetype='text/html')
+        elif filename.endswith('.png'):
+            return send_file(file_path, mimetype='image/png')
+        else:
+            return send_from_directory(CHARTS_DIR, filename)
+            
+    except Exception as e:
+        logger.error(f"Error serving chart {filename}: {e}")
+        return f"Error: {e}", 500
 
 @app.route("/api/health")
 def health_check():

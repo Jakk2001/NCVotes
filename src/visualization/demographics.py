@@ -1,7 +1,5 @@
 import logging
 import plotly.graph_objects as go
-import plotly.express as px
-from plotly.subplots import make_subplots
 from pathlib import Path
 from src.database.connection import get_engine
 from src.database.queries import (
@@ -17,7 +15,10 @@ from src.database.queries import (
 )
 from config.settings import CHARTS_DIR, PARTY_COLORS
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 GENDER_COLORS = {'M': '#4A90E2', 'F': '#E24A90', 'U': '#888888'}
@@ -29,12 +30,12 @@ AGE_COLORS = {
     '65+': '#FFEAA7'
 }
 
-def save_plotly_chart(fig, filename):
+def save_chart(fig, filename):
     """Save Plotly figure as HTML."""
     output_path = CHARTS_DIR / filename
     CHARTS_DIR.mkdir(parents=True, exist_ok=True)
     fig.write_html(str(output_path))
-    logger.info(f"Saved interactive chart: {output_path}")
+    logger.info(f"Saved: {output_path}")
 
 def plot_party_breakdown():
     """Interactive bar chart of party registration."""
@@ -66,11 +67,11 @@ def plot_party_breakdown():
             height=500
         )
         
-        save_plotly_chart(fig, 'party_breakdown.html')
+        save_chart(fig, 'party_breakdown.html')
         return True
         
     except Exception as e:
-        logger.error(f"Failed to create party breakdown chart: {e}")
+        logger.error(f"Failed to create party breakdown: {e}")
         return False
 
 def plot_party_by_race():
@@ -82,7 +83,6 @@ def plot_party_by_race():
         if df.empty:
             return False
         
-        # Get top 6 races
         top_races = df.groupby('race')['total'].sum().nlargest(6).index
         df = df[df['race'].isin(top_races)]
         
@@ -95,8 +95,6 @@ def plot_party_by_race():
                 x=party_df['race'],
                 y=party_df['total'],
                 marker_color=PARTY_COLORS.get(party, '#888888'),
-                marker_line_color='black',
-                marker_line_width=0.5,
                 hovertemplate='<b>%{x}</b><br>Party: ' + party + '<br>Count: %{y:,}<br><extra></extra>'
             ))
         
@@ -105,15 +103,14 @@ def plot_party_by_race():
             xaxis_title='Race',
             yaxis_title='Registered Voters',
             barmode='group',
-            hovermode='closest',
             height=500
         )
         
-        save_plotly_chart(fig, 'party_by_race.html')
+        save_chart(fig, 'party_by_race.html')
         return True
         
     except Exception as e:
-        logger.error(f"Failed to create party by race chart: {e}")
+        logger.error(f"Failed to create party by race: {e}")
         return False
 
 def plot_party_by_gender():
@@ -134,8 +131,6 @@ def plot_party_by_gender():
                 x=party_df['gender'],
                 y=party_df['total'],
                 marker_color=PARTY_COLORS.get(party, '#888888'),
-                marker_line_color='black',
-                marker_line_width=0.5,
                 hovertemplate='<b>%{x}</b><br>Party: ' + party + '<br>Count: %{y:,}<br><extra></extra>'
             ))
         
@@ -144,19 +139,18 @@ def plot_party_by_gender():
             xaxis_title='Gender',
             yaxis_title='Registered Voters',
             barmode='group',
-            hovermode='closest',
             height=500
         )
         
-        save_plotly_chart(fig, 'party_by_gender.html')
+        save_chart(fig, 'party_by_gender.html')
         return True
         
     except Exception as e:
-        logger.error(f"Failed to create party by gender chart: {e}")
+        logger.error(f"Failed to create party by gender: {e}")
         return False
 
 def plot_party_by_age_group():
-    """Interactive stacked bar chart of party by age group."""
+    """Interactive stacked bar chart of party by age."""
     try:
         engine = get_engine()
         df = get_party_by_age_group(engine)
@@ -173,8 +167,6 @@ def plot_party_by_age_group():
                 x=party_df['age_group'],
                 y=party_df['total'],
                 marker_color=PARTY_COLORS.get(party, '#888888'),
-                marker_line_color='black',
-                marker_line_width=0.5,
                 hovertemplate='<b>%{x}</b><br>Party: ' + party + '<br>Count: %{y:,}<br><extra></extra>'
             ))
         
@@ -183,15 +175,14 @@ def plot_party_by_age_group():
             xaxis_title='Age Group',
             yaxis_title='Registered Voters',
             barmode='stack',
-            hovermode='closest',
             height=500
         )
         
-        save_plotly_chart(fig, 'party_by_age.html')
+        save_chart(fig, 'party_by_age.html')
         return True
         
     except Exception as e:
-        logger.error(f"Failed to create party by age group chart: {e}")
+        logger.error(f"Failed to create party by age: {e}")
         return False
 
 def plot_gender_breakdown():
@@ -217,15 +208,15 @@ def plot_gender_breakdown():
             height=500
         )
         
-        save_plotly_chart(fig, 'gender_breakdown.html')
+        save_chart(fig, 'gender_breakdown.html')
         return True
         
     except Exception as e:
-        logger.error(f"Failed to create gender breakdown chart: {e}")
+        logger.error(f"Failed to create gender breakdown: {e}")
         return False
 
 def plot_gender_by_age_group():
-    """Interactive grouped bar chart of gender by age group."""
+    """Interactive grouped bar chart of gender by age."""
     try:
         engine = get_engine()
         df = get_gender_by_age_group(engine)
@@ -242,8 +233,6 @@ def plot_gender_by_age_group():
                 x=gender_df['age_group'],
                 y=gender_df['total'],
                 marker_color=GENDER_COLORS.get(gender, '#888888'),
-                marker_line_color='black',
-                marker_line_width=0.5,
                 hovertemplate='<b>%{x}</b><br>Gender: ' + gender + '<br>Count: %{y:,}<br><extra></extra>'
             ))
         
@@ -252,15 +241,14 @@ def plot_gender_by_age_group():
             xaxis_title='Age Group',
             yaxis_title='Registered Voters',
             barmode='group',
-            hovermode='closest',
             height=500
         )
         
-        save_plotly_chart(fig, 'gender_by_age.html')
+        save_chart(fig, 'gender_by_age.html')
         return True
         
     except Exception as e:
-        logger.error(f"Failed to create gender by age group chart: {e}")
+        logger.error(f"Failed to create gender by age: {e}")
         return False
 
 def plot_gender_by_race():
@@ -272,7 +260,6 @@ def plot_gender_by_race():
         if df.empty:
             return False
         
-        # Get top 6 races
         race_totals = df.groupby('race')['total'].sum().nlargest(6)
         df = df[df['race'].isin(race_totals.index)]
         
@@ -285,8 +272,6 @@ def plot_gender_by_race():
                 x=gender_df['race'],
                 y=gender_df['total'],
                 marker_color=GENDER_COLORS.get(gender, '#888888'),
-                marker_line_color='black',
-                marker_line_width=0.5,
                 hovertemplate='<b>%{x}</b><br>Gender: ' + gender + '<br>Count: %{y:,}<br><extra></extra>'
             ))
         
@@ -295,19 +280,18 @@ def plot_gender_by_race():
             xaxis_title='Race',
             yaxis_title='Registered Voters',
             barmode='stack',
-            hovermode='closest',
             height=500
         )
         
-        save_plotly_chart(fig, 'gender_by_race.html')
+        save_chart(fig, 'gender_by_race.html')
         return True
         
     except Exception as e:
-        logger.error(f"Failed to create gender by race chart: {e}")
+        logger.error(f"Failed to create gender by race: {e}")
         return False
 
 def plot_age_group_breakdown():
-    """Interactive pie chart of age group distribution."""
+    """Interactive pie chart of age distribution."""
     try:
         engine = get_engine()
         df = get_age_group_breakdown(engine)
@@ -329,11 +313,11 @@ def plot_age_group_breakdown():
             height=500
         )
         
-        save_plotly_chart(fig, 'age_breakdown.html')
+        save_chart(fig, 'age_breakdown.html')
         return True
         
     except Exception as e:
-        logger.error(f"Failed to create age group breakdown chart: {e}")
+        logger.error(f"Failed to create age breakdown: {e}")
         return False
 
 def plot_race_breakdown():
@@ -345,12 +329,11 @@ def plot_race_breakdown():
         if df.empty:
             return False
         
-        # Show top 6 races, combine others
+        import pandas as pd
         top_races = df.nlargest(6, 'total')
         others_total = df[~df['race'].isin(top_races['race'])]['total'].sum()
         
         if others_total > 0:
-            import pandas as pd
             others_row = pd.DataFrame({'race': ['Other'], 'total': [others_total]})
             plot_df = pd.concat([top_races, others_row], ignore_index=True)
         else:
@@ -368,11 +351,11 @@ def plot_race_breakdown():
             height=500
         )
         
-        save_plotly_chart(fig, 'race_breakdown.html')
+        save_chart(fig, 'race_breakdown.html')
         return True
         
     except Exception as e:
-        logger.error(f"Failed to create race breakdown chart: {e}")
+        logger.error(f"Failed to create race breakdown: {e}")
         return False
 
 def generate_all_demographics_charts():
@@ -395,20 +378,16 @@ def generate_all_demographics_charts():
         results[name] = func()
     
     success_count = sum(results.values())
-    logger.info(f"Generated {success_count}/{len(charts)} interactive charts")
+    logger.info(f"Generated {success_count}/{len(charts)} charts")
     return results
 
 def main():
     """Entry point for command-line execution."""
     results = generate_all_demographics_charts()
     if not all(results.values()):
-        logger.error("Some demographics visualizations failed")
+        logger.error("Some visualizations failed")
         exit(1)
-    logger.info("All interactive demographics visualizations completed")
+    logger.info("All visualizations completed")
 
 if __name__ == "__main__":
     main()
-
-
-
-
