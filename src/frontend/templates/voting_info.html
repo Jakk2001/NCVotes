@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ content.page_title }} - NC Elections Transparency</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .voting-info-section {
+            padding: 4rem 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .voting-info-section:last-child {
+            border-bottom: none;
+        }
+        
+        .section-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin: 0;
+        }
+        
+        .section-intro {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+        
+        /* Timeline styles for ballot lifecycle */
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+            margin: 2rem 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.75rem;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--secondary-color), var(--primary-color));
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2.5rem;
+            padding-left: 1.5rem;
+        }
+        
+        .timeline-item::before {
+            content: attr(data-step);
+            position: absolute;
+            left: -2.25rem;
+            top: 0;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background: var(--secondary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            z-index: 1;
+        }
+        
+        .timeline-item h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .timeline-item p {
+            font-size: 1.05rem;
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+        
+        /* Subsection styles */
+        .subsection {
+            margin: 2.5rem 0;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .subsection h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+        
+        .subsection-description {
+            font-size: 1.05rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+        
+        .subsection ul {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+        
+        .subsection li {
+            font-size: 1.05rem;
+            color: var(--text-color);
+            line-height: 1.8;
+            margin-bottom: 0.75rem;
+        }
+        
+        .subsection li::marker {
+            color: var(--secondary-color);
+        }
+        
+        .details-list {
+            margin-top: 1rem;
+            padding-left: 1.5rem;
+        }
+        
+        .details-list li {
+            font-size: 1rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Resources */
+        .resources {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: white;
+            border: 2px solid var(--secondary-color);
+        }
+        
+        .resources h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .resources a {
+            display: block;
+            color: var(--secondary-color);
+            font-size: 1.05rem;
+            font-weight: 600;
+            text-decoration: none;
+            margin-bottom: 0.75rem;
+            transition: color 0.2s;
+        }
+        
+        .resources a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+        
+        .resources a::before {
+            content: '→ ';
+            margin-right: 0.5rem;
+        }
+        
+        /* Quick nav */
+        .quick-nav {
+            background: var(--primary-color);
+            padding: 2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .quick-nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .quick-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.4rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        
+        .quick-nav a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="logo">NC ELECTIONS TRANSPARENCY</a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}#about">About</a></li>
+                <li><a href="{{ url_for('index') }}#data">Data</a></li>
+                <li><a href="{{ url_for('voting_info') }}">Voting Info</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{{ url_for('index') }}">← Back to Home</a>
+            </div>
+            <h1>{{ content.page_title }}</h1>
+            <p class="tagline">{{ content.page_tagline }}</p>
+        </div>
+    </header>
+
+    <div class="quick-nav">
+        <div class="quick-nav-container">
+            {% for section in content.sections %}
+            <a href="#{{ section.id }}">{{ section.title }}</a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <main>
+        {% if content.sections %}
+        {% for section in content.sections %}
+        <section class="voting-info-section" id="{{ section.id }}">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-icon">{{ section.icon }}</span>
+                    <h2>{{ section.title }}</h2>
+                </div>
+                
+                <p class="section-intro">{{ section.content.intro }}</p>
+                
+                {% if section.id == 'ballot-lifecycle' and section.content.timeline %}
+                    <div class="timeline">
+                        {% for item in section.content.timeline %}
+                        <div class="timeline-item" data-step="{{ item.step }}">
+                            <h3>{{ item.title }}</h3>
+                            <p>{{ item.description }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                {% if section.content.subsections %}
+                    {% for subsection in section.content.subsections %}
+                    <div class="subsection">
+                        <h3>{{ subsection.heading }}</h3>
+                        
+                        {% if subsection.description %}
+                        <p class="subsection-description">{{ subsection.description }}</p>
+                        {% endif %}
+                        
+                        {% if subsection.list_items %}
+                        <ul>
+                            {% for item in subsection.list_items %}
+                            <li>{{ item }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        
+                        {% if subsection.detail_items %}
+                        <ul class="details-list">
+                            {% for detail in subsection.detail_items %}
+                            <li>{{ detail }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                
+                {% if section.content.resources %}
+                <div class="resources">
+                    <h4>Additional Resources</h4>
+                    {% for resource in section.content.resources %}
+                    <a href="{{ resource.url }}" target="_blank" rel="noopener">{{ resource.text }}</a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </section>
+        {% endfor %}
+        {% else %}
+        <section class="voting-info-section">
+            <div class="container">
+                <p>No content available. Please ensure voting_info_content.json is properly configured.</p>
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <footer style="background: var(--primary-color); color: white; padding: 3rem 0; text-align: center;">
+        <div class="container">
+            <p style="margin: 0; font-size: 1rem;">NC Elections Transparency Project</p>
+            <p style="margin: 0.5rem 0 0; font-size: 0.9rem; opacity: 0.8;">Making democracy accessible through data</p>
+        </div>
+    </footer>
+</body>
+</html>

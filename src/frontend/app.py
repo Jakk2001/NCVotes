@@ -38,6 +38,55 @@ app = Flask(
     static_folder=str(static_dir)
 )
 
+# Add this route to src/frontend/app.py
+# Place it before the main() function, after the other route definitions
+
+@app.route("/voting-info")
+def voting_info():
+    """Voting and elections information page."""
+    try:
+        import json
+        from pathlib import Path
+        
+        # Load content from JSON file
+        # Try multiple possible locations
+        possible_paths = [
+            PROJECT_ROOT / "data" / "voting_info_content.json",
+            Path(__file__).parent.parent.parent / "data" / "voting_info_content.json",
+        ]
+        
+        content = None
+        for content_path in possible_paths:
+            if content_path.exists():
+                logger.info(f"Loading voting info from: {content_path}")
+                with open(content_path, 'r', encoding='utf-8') as f:
+                    content = json.load(f)
+                break
+        
+        if content is None:
+            # Fallback minimal content if file doesn't exist
+            logger.warning("Voting info content file not found, using fallback")
+            content = {
+                "page_title": "Voting & Elections in North Carolina",
+                "page_tagline": "Your guide to understanding how elections work in NC",
+                "sections": []
+            }
+        
+        # Ensure content has the expected structure
+        if not isinstance(content, dict):
+            raise ValueError(f"Content must be a dict, got {type(content)}")
+        if 'sections' not in content:
+            content['sections'] = []
+        
+        return render_template("voting_info.html", content=content)
+        
+    except Exception as e:
+        logger.error(f"Error rendering voting info page: {e}", exc_info=True)
+        return f"Error loading voting info page: {str(e)}", 500
+    
+    return render_template("voting_info.html", content=content)
+
+
 
 @app.route("/trends")
 def trends_page():

@@ -1,0 +1,256 @@
+{
+  "page_title": "Voting & Elections in North Carolina",
+  "page_tagline": "Your guide to understanding how elections work in NC",
+  
+  "sections": [
+    {
+      "id": "ballot-lifecycle",
+      "title": "The Ballot Lifecycle",
+      "icon": "",
+      "content": {
+        "intro": "Understanding what happens from the moment you walk into your polling site to the certification of an election in North Carolina.",
+        "timeline": [
+          {
+            "step": 1,
+            "title": "Voter Check-In",
+            "description": "Poll workers verify your registration and ID. Your name is checked against the voter rolls - Are you Registered to vote?"
+          },
+          {
+            "step": 2,
+            "title": "Ballot Issued",
+            "description": "You receive your ballot (paper only in NC) and proceed to a private voting booth. No pictures allowed!"
+          },
+          {
+            "step": 3,
+            "title": "Voting",
+            "description": "You mark your choices privately. Take your time and review before submitting."
+          },
+          {
+            "step": 4,
+            "title": "Ballot Submission",
+            "description": "Your ballot is scanned by the voting machine. A confirmation is provided - you should see the number of ballots go up by one."
+          },
+          {
+            "step": 5,
+            "title": "Counting",
+            "description": "After polls close, ballots are tabulated by precinct. Results are transmitted to the county board of elections. Ballots never leave your county!"
+          },
+          {
+            "step": 6,
+            "title": "Canvass",
+            "description": "Your County Board of Elections verifies and certifies results. This typically occurs within 10 days after the election and is a public meeting."
+          },
+          {
+            "step": 7,
+            "title": "State Certification",
+            "description": "The NC State Board of Elections certifies statewide results, typically within 3-4 weeks of the election, after recieving totals from all 100 counties."
+          }
+        ],
+        "resources": [
+          {
+            "text": "Election Security",
+            "url": "https://www.ncsbe.gov/election-security"
+          },
+          {
+            "text": "County Boards of Elections",
+            "url": "https://www.ncsbe.gov/about-elections/county-boards-elections"
+          },
+          {
+            "text": "NC State Board of Elections - About Elections",
+            "url": "https://www.ncsbe.gov/about-elections"
+          }
+        ]
+      }
+    },
+    
+    {
+      "id": "registering",
+      "title": "Registering to Vote",
+      "icon": "",
+      "content": {
+        "intro": "Registration is your gateway to voting. Here's everything you need to know.",
+        "subsections": [
+          {
+            "heading": "Who Can Register",
+            "list_items": [
+              "Must be a U.S. citizen",
+              "Must live in the NC county where you are registering, and have resided there for at least 30 days prior to Election Day.",
+              "Must be at least 18 years old (16-17 year-olds can pre-register but cannot vote)",
+              "Cannot be serving a felony sentence (including probation or parole)"
+            ]
+          },
+          {
+            "heading": "How to Register",
+            "list_items": [
+              "Online at the NC State Board of Elections website",
+              "By mail using a voter registration application",
+              "In person at your county board of elections",
+              "At the DMV when getting or renewing your driver's license",
+              "During early voting through same-day registration - but NOT on Election Day",
+              "*NOTE: You must be registered to vote either 25 days before Election Day or through Same-day Registration to be eligible to vote in an election*"
+            ]
+          },
+          {
+            "heading": "What You Need",
+            "list_items": [
+              "Your citizenship status",
+              "Your age",
+              "Your full legal name",
+              "Your date of birth",
+              "The last four digits of your SSN | OR | your full North Carolina driver's license number",
+              "Your current residential address in NC",
+              "Your current mailing address in NC - you must recieve mail here, if your card is returned as undeliverable your registration will be cancelled!",
+              "Your signature",
+              "OPTIONAL INFORMATION:",
+              "Your gender, ethnicity, and race",
+              "Your preffered party affiliation (Democrat, Republican, or 'Unaffiliated' - our 'Independent'",
+              "Your contact information - just in case there are any problems with your registration"
+            ]
+          },
+          {
+            "heading": "How Registration Data is Stored",
+            "list_items": [
+              "The NC State Board of Elections maintains a centralized statewide voter registration database",
+              "Data includes: name, address, date of birth, party affiliation, voting history (not who you voted for, just which elections you voted in)",
+              "Sensitive data (like SSN, driver's license numbers) is protected"
+            ]
+          }
+        ],
+        "resources": [
+          {
+            "text": "Voter Registration Form",
+            "url": "https://dl.ncsbe.gov/Voter_Registration/NCVoterRegForm_06W.pdf"
+          },
+          {
+            "text": "Register to Vote Online",
+            "url": "https://www.ncdot.gov/dmv/offices-services/online/Pages/voter-registration-application.aspx"
+          },
+          {
+            "text": "Check Your Registration Status",
+            "url": "https://vt.ncsbe.gov/RegLkup/"
+          }
+        ]
+      }
+    },
+    
+    {
+      "id": "challenges",
+      "title": "Challenges to Voting",
+      "icon": "",
+      "content": {
+        "intro": "Despite North Carolina's voting infrastructure, various barriers can affect voter participation.",
+        "subsections": [
+          {
+            "heading": "Voter ID Requirements",
+            "description": "North Carolina requires voters to show photo ID when voting in person. Acceptable forms include NC driver's license, US passport, military ID, tribal ID, student ID from some NC schools, and more. Free voter photo IDs are available from county boards of elections.",
+            "detail_items": [
+              "Voters without ID can vote a provisional ballot and provide ID later",
+              "Reasonable impediment declarations are available for voters who cannot obtain ID"
+            ]
+          },
+          {
+            "heading": "Polling Site Changes",
+            "description": "County boards of elections can change polling locations, which may confuse voters or create access issues.",
+            "detail_items": [
+              "Changes must be approved by the county board and state board",
+              "Transportation challenges can disproportionately affect rural and low-income voters"
+            ]
+          },
+          {
+            "heading": "Legal Challenges to Votes",
+            "description": "Votes can be challenged at multiple levels, from local precincts to state courts.",
+            "detail_items": [
+              "Any registered voter can challenge another's eligibility at the polls",
+              "Challenged ballots are cast as provisional ballots",
+              "County boards review challenges after Election Day during the public 'Canvas' meeting"
+            ]
+          },
+          {
+            "heading": "Access Issues",
+            "description": "Various factors can limit access to voter registration and voting.",
+            "detail_items": [
+              "Limited early voting hours or locations in some counties",
+              "Long wait times at polling places, particularly in urban areas",
+              "Lack of transportation to polling sites",
+              "Language barriers for non-English speakers",
+              "Accessibility issues for voters with disabilities",
+              "Address verification issues for unhoused individuals, students, and rural residents"
+            ]
+          },
+          {
+            "heading": "Disenfranchisement and Misinformation",
+            "description": "Voter supression comes in many forms",
+            "detail_items": [
+              "NC is among the more restrictive states on felony disenfranchisement",
+              "Misinformation campaigns target college students, making false claims that they can't register in NC or that their loans may be affected by a registration change."
+            ]
+          }
+        ],
+        "resources": [
+          {
+            "text": "NC Voter ID Information",
+            "url": "https://www.ncsbe.gov/voting/voter-id"
+          },
+          {
+            "text": "Find Your Polling Place",
+            "url": "https://vt.ncsbe.gov/PPLkup/"
+          }
+        ]
+      }
+    },
+    
+    {
+      "id": "upcoming",
+      "title": "Voting in Upcoming Elections",
+      "icon": "",
+      "content": {
+        "intro": "Stay informed about upcoming elections and how to participate.",
+        "subsections": [
+          {
+            "heading": "2026 Elections",
+            "description": "Mid-term elections include federal, state, and local races.",
+            "detail_items": [
+              "U.S. House of Representatives (all seats)",
+              "U.S. Senate (1/2 seats up",
+              "State legislative races (NC House and Senate)",
+              "County and municipal offices like County Commission and School Board",
+              "Judicial races"
+            ]
+          },
+          {
+            "heading": "Finding Candidate Information",
+            "list_items": [
+              "NC State Board of Elections publishes candidate lists and sample ballots",
+              "Local news sources and candidate websites",
+              "Voter guides from nonpartisan organizations",
+              "Candidate forums and debates in your community"
+            ]
+          },
+          {
+            "heading": "How to Vote",
+            "list_items": [
+              "Early voting: Begins 17 days before Election Day at designated sites",
+              "Election Day voting: At your assigned precinct",
+              "Absentee by-mail voting: Request ballot in advance, return by Election Day",
+              "Military and overseas voting: Special procedures apply"
+            ]
+          }
+        ],
+        "resources": [
+          {
+            "text": "NC Election Calendar",
+            "url": "https://www.ncsbe.gov/elections/election-calendar"
+          },
+          {
+            "text": "Sample Ballot Lookup",
+            "url": "https://www.ncsbe.gov/voting/sample-ballot"
+          },
+          {
+            "text": "Absentee Voting Information",
+            "url": "https://www.ncsbe.gov/voting/vote-mail"
+          }
+        ]
+      }
+    }
+  ]
+}
