@@ -73,6 +73,12 @@ EMAIL_CONFIG = {
 
 def get_db_url():
     """Construct PostgreSQL connection URL."""
+    # Use Render's DATABASE_URL if available (production)
+    database_url = os.getenv("DATABASE_URL")
+    if database_url:
+        return database_url
+    
+    # Otherwise use individual config vars (local development)
     return (
         f"postgresql://{DB_CONFIG['user']}:{DB_CONFIG['password']}@"
         f"{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['database']}"

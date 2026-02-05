@@ -16,11 +16,13 @@ from src.database.connection import get_engine, test_connection
 from src.database.queries import get_registration_by_party, get_registration_by_county
 from config.settings import CHARTS_DIR, PROJECT_ROOT
 
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
 
 # Initialize Flask app
 template_dir = PROJECT_ROOT / "src" / "frontend" / "templates"
@@ -37,6 +39,13 @@ app = Flask(
     template_folder=str(template_dir),
     static_folder=str(static_dir)
 )
+
+import os
+
+# Production settings
+if os.getenv('ENVIRONMENT') == 'production':
+    app.config['DEBUG'] = False
+    app.config['TESTING'] = False
 
 # Add this route to src/frontend/app.py
 # Place it before the main() function, after the other route definitions
