@@ -9,6 +9,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+LAST_ELECTION = '11/04/2025'
+LAST_GENERAL = '11/05/2024'
+
 def get_key_stats(engine: Engine) -> dict:
     """
     Calculate key statistics about voter registrations.
@@ -54,8 +57,8 @@ def get_new_registrations_summary(engine: Engine) -> dict:
     today = datetime.now()
     dates = {
         '2_weeks': (today - timedelta(weeks=2)).strftime('%m/%d/%Y'),
-        'last_election': '11/05/2024',
-        'last_general': '11/05/2024', 
+        'last_election': LAST_ELECTION,
+        'last_general': LAST_GENERAL, 
         '2_years': (today - timedelta(days=730)).strftime('%m/%d/%Y'),
         '4_years': (today - timedelta(days=1460)).strftime('%m/%d/%Y')
     }
