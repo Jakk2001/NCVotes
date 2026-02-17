@@ -23,12 +23,6 @@ data/raw/*
 !data/raw/.gitkeep
 !data/raw/manifest.json
 
-# Output files
-outputs/
-*.png
-*.jpg
-*.pdf
-
 # IDE
 .vscode/
 .idea/
