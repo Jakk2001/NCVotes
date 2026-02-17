@@ -172,20 +172,28 @@ def index():
 def party_page():
     """Dedicated page for party registration visualization."""
     try:
+        import json
+        
         chart_exists = (CHARTS_DIR / "party_breakdown.png").exists()
         
-        # Get party statistics
+        # Load stats from pre-generated JSON (no database query)
+        stats_file = CHARTS_DIR / 'trends_key_stats.json'
         stats = {}
-        if chart_exists:
-            engine = get_engine()
-            df = get_registration_by_party(engine)
-            if not df.empty:
-                stats = {
-                    'total': int(df['total'].sum()),
-                    'parties': df.to_dict('records'),
-                    'top_party': df.iloc[0]['party'] if len(df) > 0 else None,
-                    'top_count': int(df.iloc[0]['total']) if len(df) > 0 else 0
-                }
+        
+        if stats_file.exists():
+            try:
+                with open(stats_file, 'r') as f:
+                    data = json.load(f)
+                    # Extract what we need for the party page
+                    stats = {
+                        'total': data.get('current_total', 0),
+                        'parties': data.get('party_breakdown', []),
+                        'top_party': data.get('party_breakdown', [{}])[0].get('party') if data.get('party_breakdown') else None,
+                        'top_count': data.get('party_breakdown', [{}])[0].get('total') if data.get('party_breakdown') else 0
+                    }
+            except Exception as e:
+                logger.warning(f"Could not load stats JSON: {e}")
+                stats = {}
         
         return render_template(
             "party.html",
@@ -194,7 +202,7 @@ def party_page():
         )
     except Exception as e:
         logger.error(f"Error rendering party page: {e}")
-        return f"Error: {e}", 500
+        return render_template("party.html", chart_exists=False, stats={})
 
 @app.route("/county")
 def county_page():
