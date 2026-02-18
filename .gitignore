@@ -30,6 +30,9 @@ data/raw/*
 *.swo
 *~
 
+# temp
+.temp/
+
 # OS
 .DS_Store
 Thumbs.db
