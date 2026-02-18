@@ -92,8 +92,8 @@ def get_party_new_registrations_summary(engine: Engine) -> dict:
     today = datetime.now()
     dates = {
         '2_weeks': (today - timedelta(weeks=2)).strftime('%m/%d/%Y'),
-        'last_election': '11/05/2024',
-        'last_general': '11/05/2024',
+        'last_election': LAST_ELECTION,
+        'last_general': LAST_GENERAL,
         '2_years': (today - timedelta(days=730)).strftime('%m/%d/%Y'),
         '4_years': (today - timedelta(days=1460)).strftime('%m/%d/%Y')
     }

@@ -12,23 +12,23 @@
     "last_election": [
       {
         "party": "DEM",
-        "total": 110792
+        "total": 27847
       },
       {
         "party": "GRE",
-        "total": 642
+        "total": 183
       },
       {
         "party": "LIB",
-        "total": 3346
+        "total": 752
       },
       {
         "party": "REP",
-        "total": 131902
+        "total": 33960
       },
       {
         "party": "UNA",
-        "total": 269998
+        "total": 75798
       }
     ],
     "last_general": [
