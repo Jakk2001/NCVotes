@@ -97,14 +97,24 @@
                         </div>
                         
                         <div class="stats-intro">
-                            <p>Track new voter registrations and demographic trends across multiple timeframes. These metrics show how many new voters have registered since key dates.</p>
+                            <p>Track new voter registrations and demographic trends across time. These metrics show how many new voters have registered since key dates.</p>
                         </div>
+
+                         
+                        <div class="stat-note">
+                            {% if last_updated %}
+                            <p style="color: #525252; font-size: 1rem; margin-top: 2rem;">
+                                <strong>Data Last Updated:</strong> {{ last_updated.strftime('%B %d, %Y at %I:%M %p') }}
+                            </p>
+                            {% endif %}
+                        </div>
+
 
                         <!-- Current Total -->
                         <div class="stats-summary" style="margin-bottom: 2rem;">
-                            <p><strong>Current Total Registered Voters:</strong> {{ '{:,}'.format(stats.current_total) }}</p>
+                            <p><strong>Current Total of Registered Voters:</strong> {{ '{:,}'.format(stats.current_total) }}</p>
                         </div>
-
+                       
                         <!-- New Registrations by Period -->
                         <div class="stat-category">
                             <h3>New Registrations by Timeframe</h3>
@@ -133,63 +143,137 @@
                             <h3>New Registrations by Party</h3>
                             <p class="stat-note">Party affiliation of voters who registered in each timeframe</p>
                             
-                            {% for period, parties in stats.party_new_regs.items() %}
-                            <div class="period-group">
-                                <h3>Since {{ period.replace('_', ' ').title() }}</h3>
-                                <div class="stat-table-wrapper">
-                                    <table class="stat-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Party</th>
-                                                <th>New Registrations</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for party in parties %}
-                                            <tr>
-                                                <td>{{ party.party }}</td>
-                                                <td>{{ '{:,}'.format(party.total) }}</td>
-                                            </tr>
+                            <div class="stat-table-wrapper">
+                                <table class="stat-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Party</th>
+                                            {% for period in stats.party_new_regs %}
+                                            <th>{{ period.replace('_', ' ').title() }}</th>
                                             {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% set ns = namespace(parties=[]) %}
+                                        {% for period, parties in stats.party_new_regs.items() %}
+                                            {% for party in parties %}
+                                                {% if party.party not in ns.parties %}
+                                                    {% set ns.parties = ns.parties + [party.party] %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        
+                                        {% for party_name in ns.parties %}
+                                        <tr>
+                                            <td>{{ party_name }}</td>
+                                            {% for period, parties in stats.party_new_regs.items() %}
+                                                {% set ns.found = 0 %}
+                                                {% for party in parties %}
+                                                    {% if party.party == party_name %}
+                                                        {% set ns.found = party.total %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <td>{{ '{:,}'.format(ns.found) }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
-                            {% endfor %}
                         </div>
-
+                        
                         <!-- Age Group Breakdown of New Registrations -->
                         <div class="stat-category">
                             <h3>New Registrations by Age Group</h3>
                             <p class="stat-note">Age group distribution of voters who registered in each timeframe</p>
                             
-                            {% for period, groups in stats.age_new_regs.items() %}
-                            <div class="period-group">
-                                <h3>Since {{ period.replace('_', ' ').title() }}</h3>
-                                <div class="stat-table-wrapper">
-                                    <table class="stat-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Age Group</th>
-                                                <th>New Registrations</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for group in groups %}
-                                            <tr>
-                                                <td>{{ group.age_group }}</td>
-                                                <td>{{ '{:,}'.format(group.total) }}</td>
-                                            </tr>
+                            <div class="stat-table-wrapper">
+                                <table class="stat-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Age Group</th>
+                                            {% for period in stats.age_new_regs %}
+                                            <th>{{ period.replace('_', ' ').title() }}</th>
                                             {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% set ns = namespace(groups=[]) %}
+                                        {% for period, groups in stats.age_new_regs.items() %}
+                                            {% for group in groups %}
+                                                {% if group.age_group not in ns.groups %}
+                                                    {% set ns.groups = ns.groups + [group.age_group] %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        
+                                        {% for group_name in ns.groups %}
+                                        <tr>
+                                            <td>{{ group_name }}</td>
+                                            {% for period, groups in stats.age_new_regs.items() %}
+                                                {% set ns.found = 0 %}
+                                                {% for group in groups %}
+                                                    {% if group.age_group == group_name %}
+                                                        {% set ns.found = group.total %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <td>{{ '{:,}'.format(ns.found) }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
-                            {% endfor %}
                         </div>
-                    </div>
-                </section>
-                {% endif %}
+
+                         <!-- Gender Breakdown of New Registrations -->
+                        <div class="stat-category">
+                            <h3>New Registrations by Gender</h3>
+                            <p class="stat-note">Gender distribution of voters who registered in each timeframe</p>
+                            
+                            <div class="stat-table-wrapper">
+                                <table class="stat-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Gender</th>
+                                            {% for period in stats.gender_new_regs %}
+                                            <th>{{ period.replace('_', ' ').title() }}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% set ns = namespace(genders=[]) %}
+                                        {% for period, genders in stats.gender_new_regs.items() %}
+                                            {% for g in genders %}
+                                                {% if g.gender not in ns.genders %}
+                                                    {% set ns.genders = ns.genders + [g.gender] %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        
+                                        {% for gender_name in ns.genders %}
+                                        <tr>
+                                            <td>{{ gender_name }}</td>
+                                            {% for period, genders in stats.gender_new_regs.items() %}
+                                                {% set ns.found = 0 %}
+                                                {% for g in genders %}
+                                                    {% if g.gender == gender_name %}
+                                                        {% set ns.found = g.total %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <td>{{ '{:,}'.format(ns.found) }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+        
+                    </section> 
+                    {% endif %}
+
+                       
 
                 <style>
                 .key-stats-section {

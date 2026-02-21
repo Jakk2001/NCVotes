@@ -104,6 +104,14 @@ def trends_page():
         import json
         
         chart_exists = (CHARTS_DIR / "registration_trends.png").exists()
+
+        # Get data freshness info
+        last_updated = None
+        if CHARTS_DIR.exists():
+            chart_files = list(CHARTS_DIR.glob("*.png"))
+            if chart_files:
+                latest_file = max(chart_files, key=lambda p: p.stat().st_mtime)
+                last_updated = datetime.fromtimestamp(latest_file.stat().st_mtime)
         
         # Read pre-generated stats from JSON file (instant load)
         stats_file = CHARTS_DIR / 'trends_key_stats.json'
@@ -132,6 +140,7 @@ def trends_page():
         return render_template(
             "trends.html",
             chart_exists=chart_exists,
+            last_updated=last_updated,
             stats=stats
         )
     except Exception as e:

@@ -30,6 +30,9 @@ def get_key_stats(engine: Engine) -> dict:
     
     # Get age group breakdown of new registrations
     stats['age_new_regs'] = get_age_new_registrations_summary(engine)
+
+    #Get gender breakdown of new registrations
+    stats['gender_new_regs'] = get_gender_new_registrations_summary(engine)
     
     return stats
 
@@ -166,6 +169,43 @@ def get_age_new_registrations_summary(engine: Engine) -> dict:
             results[label] = df.to_dict('records') if not df.empty else []
         except Exception as e:
             logger.error(f"Failed to fetch age new registrations for {label}: {e}")
+            results[label] = []
+    
+    return results
+
+def get_gender_new_registrations_summary(engine: Engine) -> dict:
+    """Get gender breakdown of new registrations in each timeframe."""
+    
+    today = datetime.now()
+    dates = {
+        '2_weeks': (today - timedelta(weeks=2)).strftime('%m/%d/%Y'),
+        'last_election': LAST_ELECTION,
+        'last_general': LAST_GENERAL,
+        '2_years': (today - timedelta(days=730)).strftime('%m/%d/%Y'),
+        '4_years': (today - timedelta(days=1460)).strftime('%m/%d/%Y')
+    }
+    
+    results = {}
+    
+    for label, cutoff_date in dates.items():
+        query = f"""
+        SELECT 
+            gender_code as gender,
+            COUNT(*) as total
+        FROM raw.raw_voters
+        WHERE status_cd IN ('A', 'I')
+          AND gender_code IN ('F', 'M', 'U')
+          AND registr_dt ~ '^[0-9]{{2}}/[0-9]{{2}}/[0-9]{{4}}$'
+          AND TO_DATE(registr_dt, 'MM/DD/YYYY') > TO_DATE('{cutoff_date}', 'MM/DD/YYYY')
+        GROUP BY gender_code
+        ORDER BY gender_code;
+        """
+        
+        try:
+            df = pd.read_sql(query, engine)
+            results[label] = df.to_dict('records') if not df.empty else []
+        except Exception as e:
+            logger.error(f"Failed to fetch gender new registrations for {label}: {e}")
             results[label] = []
     
     return results
