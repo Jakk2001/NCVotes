@@ -52,11 +52,11 @@
         .timeline::before {
             content: '';
             position: absolute;
-            left: 0.75rem;
+            left: -1.1rem;
             top: 0;
             bottom: 0;
-            width: 3px;
-            background: linear-gradient(to bottom, var(--secondary-color), var(--primary-color));
+            width: 6px;
+            background: linear-gradient(to bottom, #aa3a26,#1b9aaa);
         }
         
         .timeline-item {
@@ -73,7 +73,7 @@
             width: 2rem;
             height: 2rem;
             border-radius: 50%;
-            background: var(--secondary-color);
+            background: #a05c7b;
             color: white;
             display: flex;
             align-items: center;
@@ -101,7 +101,7 @@
             margin: 2.5rem 0;
             padding: 2rem;
             background: #f8f9fa;
-            border-left: 4px solid var(--secondary-color);
+            border-left: 4px solid #1e7cb3;
         }
         
         .subsection h3 {
@@ -131,7 +131,7 @@
         }
         
         .subsection li::marker {
-            color: var(--secondary-color);
+            color: #1e7cb3;
         }
         
         .details-list {
@@ -150,7 +150,7 @@
             margin-top: 2rem;
             padding: 1.5rem;
             background: white;
-            border: 2px solid var(--secondary-color);
+            border: 2px solid #ff5e36;
         }
         
         .resources h4 {
@@ -317,9 +317,15 @@
         {% endif %}
     </main>
 
-    <footer style="background: var(--primary-color); color: white; padding: 3rem 0; text-align: center;">
+     <footer>
         <div class="container">
-            <p style="margin: 0; font-size: 1rem;">2026 NC Elections Transparency Project</p>
+            <p>
+                Data source: 
+                <a href="https://www.ncsbe.gov/" target="_blank" rel="noopener">
+                    NC State Board of Elections
+                </a>
+            </p>
+            <p>&copy; 2026 NC Elections Transparency Project</p>
         </div>
     </footer>
 </body>

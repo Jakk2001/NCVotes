@@ -23,35 +23,46 @@
         <div class="container">
             <h1>NC Elections<br>Transparency Project</h1>
             <p class="tagline">
-                Making North Carolina voter registration data accessible, transparent, and understandable
+                For accessible, understandable, and transparent elections in North Carolina
             </p>
-            <a href="#data" class="hero-cta">Explore the Data</a>
         </div>
     </header>
 
     <section class="about" id="about">
         <div class="container">
             <div class="about-content">
-                <h2>Democracy Through Data</h2>
+                <h2>The Mission</h2>
                 <p>
-                    Understanding who is registered to vote—and who isn't—is fundamental to 
-                    a functioning democracy. Our platform aggregates official 
-                    data from the NC State Board of Elections, making complex electoral information 
-                    accessible and understandable.
+                    Democracy is fundamentally a participatory project. Understanding who is registered to vote, who isn't, and why, is essential to building a better democracy.
+                    This platform aggregates official  data from the NC State Board of Elections, making complex electoral information 
+                    accessible and understandable. We provide a picture of the shape, scope, and engagement of the electorate by analyzing the voter rolls and election results. 
                 </p>
-                <div class="highlight">
-                    <strong>Our Mission</strong>
-                    To strengthen democracy through transparency and data accessibility, empowering 
-                    North Carolinians to understand and engage with their electoral system.
-                </div>
-                {% if last_updated %}
-                <p style="color: #666; font-size: 1rem; margin-top: 2rem;">
-                    <strong>Data Last Updated:</strong> {{ last_updated.strftime('%B %d, %Y at %I:%M %p') }}
-                </p>
-                {% endif %}
             </div>
         </div>
     </section>
+
+
+    <!-- Latest News Post -->
+    {% if latest_post %}
+    <section class="hero">
+        <div class="container">
+            <div class="latest-post-card">
+                <div class="latest-post-label">Latest News</div>
+                <h2><a href="{{ url_for('blog_post', slug=latest_post.slug) }}">{{ latest_post.title }}</a></h2>
+                <div class="latest-post-meta">
+                    {% if latest_post.date %}
+                    <span>{{ latest_post.date.strftime('%B %d, %Y') if latest_post.date is not string else latest_post.date }}</span>
+                    {% endif %}
+                    <span class="latest-post-category cat-{{ latest_post.category }}">{{ latest_post.category }}</span>
+                </div>
+                {% if latest_post.summary %}
+                <p>{{ latest_post.summary }}</p>
+                {% endif %}
+                <a href="{{ url_for('blog_post', slug=latest_post.slug) }}" class="latest-post-link">Read more →</a>
+            </div>
+        </div>
+    </section>
+    {% endif %}
 
     <section class="visualizations" id="data">
         <div class="container">
@@ -66,7 +77,7 @@
             <div class="viz-grid">
                 <!-- Interactive Map Card -->
                 <a href="{{ url_for('interactive_map') }}" class="viz-card">
-                    <h3>Interactive County Map</h3>
+                    <h3>County Maps</h3>
                     <img src="{{ url_for('serve_chart', filename='county_choropleth.png') }}" 
                              alt="Voter Demographics">
                     <div class="viz-card-content">

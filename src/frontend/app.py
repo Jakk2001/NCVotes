@@ -168,11 +168,22 @@ def index():
             if chart_files:
                 latest_file = max(chart_files, key=lambda p: p.stat().st_mtime)
                 last_updated = datetime.fromtimestamp(latest_file.stat().st_mtime)
+
+        # Get latest blog post
+        latest_post = None
+        try:
+            posts = load_blog_posts()
+            if posts:
+                latest_post = posts[0]
+        except Exception as e:
+            logger.warning(f"Could not load latest blog post: {e}")
         
         return render_template(
             "index.html",
             charts=charts,
-            last_updated=last_updated
+            last_updated=last_updated,
+            latest_post=latest_post,
+
         )
     except Exception as e:
         logger.error(f"Error rendering index: {e}")
