@@ -15,7 +15,8 @@ from datetime import datetime
 from src.database.connection import get_engine, test_connection
 from src.database.queries import get_registration_by_party, get_registration_by_county
 from config.settings import CHARTS_DIR, PROJECT_ROOT
-
+import yaml
+import markdown
 
 logging.basicConfig(
     level=logging.INFO,
@@ -271,7 +272,128 @@ def interactive_map():
         logger.error(f"Error rendering interactive map: {e}")
         return f"Error: {e}", 500
     
+    """
+Blog routes - paste into src/frontend/app.py before the main() function.
+Also add these imports at the top of app.py:
+
+    import yaml
+    import markdown
+
+And add to requirements.txt:
+    markdown==3.7
+    pyyaml==6.0.2
+    pygments==2.18.0
+"""
+
+# --- Add to app.py BEFORE main() ---
+
+def load_blog_posts():
+    """Load all blog posts from data/blog/ directory, sorted by date descending."""
+    import yaml
+    import markdown
     
+    blog_dir = PROJECT_ROOT / "data" / "blog"
+    posts = []
+    
+    if not blog_dir.exists():
+        logger.warning(f"Blog directory not found: {blog_dir}")
+        return posts
+    
+    for md_file in blog_dir.glob("*.md"):
+        try:
+            raw = md_file.read_text(encoding='utf-8')
+            
+            # Parse YAML frontmatter
+            if raw.startswith('---'):
+                parts = raw.split('---', 2)
+                if len(parts) >= 3:
+                    meta = yaml.safe_load(parts[1])
+                    body_md = parts[2].strip()
+                else:
+                    continue
+            else:
+                continue
+            
+            # Slug from filename (e.g. 2026-02-23-my-post.md -> my-post)
+            slug = md_file.stem
+            # Strip leading date prefix if present (YYYY-MM-DD-)
+            if len(slug) > 11 and slug[4] == '-' and slug[7] == '-' and slug[10] == '-':
+                slug = slug[11:]
+            
+            posts.append({
+                'slug': slug,
+                'filename': md_file.stem,
+                'title': meta.get('title', 'Untitled'),
+                'date': meta.get('date'),
+                'category': meta.get('category', 'general'),
+                'summary': meta.get('summary', ''),
+                'author': meta.get('author', ''),
+                'body_md': body_md,
+            })
+        except Exception as e:
+            logger.error(f"Error loading blog post {md_file.name}: {e}")
+    
+    # Sort by date descending
+    posts.sort(key=lambda p: p.get('date') or '', reverse=True)
+    return posts
+
+
+def render_markdown(text):
+    """Convert markdown to HTML with extensions."""
+    import markdown
+    extensions = [
+        'markdown.extensions.fenced_code',
+        'markdown.extensions.codehilite',
+        'markdown.extensions.tables',
+        'markdown.extensions.toc',
+        'markdown.extensions.footnotes',
+    ]
+    extension_configs = {
+        'markdown.extensions.codehilite': {
+            'css_class': 'highlight',
+            'linenums': False,
+        }
+    }
+    return markdown.markdown(text, extensions=extensions, extension_configs=extension_configs)
+
+
+@app.route("/blog")
+def blog():
+    """Blog listing page."""
+    from flask import request
+    category = request.args.get('category', None)
+    posts = load_blog_posts()
+    
+    if category:
+        posts = [p for p in posts if p['category'] == category]
+    
+    categories = sorted(set(p['category'] for p in load_blog_posts()))
+    
+    return render_template(
+        "blog.html",
+        posts=posts,
+        categories=categories,
+        active_category=category,
+    )
+
+
+@app.route("/blog/<slug>")
+def blog_post(slug):
+    """Individual blog post page."""
+    posts = load_blog_posts()
+    
+    post = None
+    for p in posts:
+        if p['slug'] == slug:
+            post = p
+            break
+    
+    if post is None:
+        return "Post not found", 404
+    
+    post['body_html'] = render_markdown(post['body_md'])
+    
+    return render_template("blog_post.html", post=post)
 
 @app.route("/maps/<filename>")
 def serve_map(filename):

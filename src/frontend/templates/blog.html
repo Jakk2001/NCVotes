@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News - NC Elections Transparency Project</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Blog listing styles */
+        .blog-filters {
+            padding: 1.5rem 0;
+            background: var(--bg-alt);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .filter-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-links span {
+            font-weight: 700;
+            color: var(--text-light);
+            margin-right: 0.5rem;
+        }
+
+        .filter-links a {
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: 600;
+            padding: 0.4rem 1rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .filter-links a:hover,
+        .filter-links a.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .blog-list {
+            padding: 4rem 0;
+        }
+
+        .post-card {
+            border-bottom: 1px solid var(--border-color);
+            padding: 2.5rem 0;
+        }
+
+        .post-card:first-child {
+            padding-top: 0;
+        }
+
+        .post-card:last-child {
+            border-bottom: none;
+        }
+
+        .post-meta {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .post-date {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .post-category {
+            color: white;
+            padding: 0.2rem 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: var(--primary-color);
+        }
+
+        .post-category.cat-analysis {
+            background: var(--primary-color);
+        }
+
+        .post-category.cat-news {
+            background: #e67e22;
+        }
+
+        .post-category.cat-research {
+            background: var(--primary-color);
+        }
+
+        .filter-links a.cat-analysis:hover,
+        .filter-links a.cat-analysis.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .filter-links a.cat-news:hover,
+        .filter-links a.cat-news.active {
+            background: #e67e22;
+            border-color: #e67e22;
+        }
+
+        .filter-links a.cat-research:hover,
+        .filter-links a.cat-research.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .post-card h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+        }
+
+        .post-card h2 a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .post-card h2 a:hover {
+            color: var(--secondary-color);
+        }
+
+        .post-summary {
+            font-size: 1.15rem;
+            color: var(--text-light);
+            line-height: 1.7;
+            max-width: 800px;
+        }
+
+        .post-read-more {
+            display: inline-block;
+            margin-top: 1rem;
+            color: var(--secondary-color);
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .post-read-more:hover {
+            color: var(--primary-color);
+        }
+
+        .no-posts {
+            padding: 4rem 0;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="logo">NC ELECTIONS TRANSPARENCY</a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}#about">About</a></li>
+                <li><a href="{{ url_for('index') }}#data">Data</a></li>
+                <li><a href="{{ url_for('voting_info') }}">Voting Info</a></li>
+                <li><a href="{{ url_for('blog') }}" style="color: var(--secondary-color);">News</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{{ url_for('index') }}">← Back to Home</a>
+            </div>
+            <h1>News</h1>
+            <p class="tagline">Analysis, research, and news on NC elections and voter data</p>
+        </div>
+    </header>
+
+    {% if categories %}
+    <div class="blog-filters">
+        <div class="container">
+            <div class="filter-links">
+                <span>Filter:</span>
+                <a href="{{ url_for('blog') }}" class="{{ 'active' if not active_category else '' }}">All</a>
+                {% for cat in categories %}
+                <a href="{{ url_for('blog', category=cat) }}" class="cat-{{ cat }} {{ 'active' if active_category == cat else '' }}">{{ cat | capitalize }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <main class="blog-list">
+        <div class="container">
+            {% if posts %}
+                {% for post in posts %}
+                <article class="post-card">
+                    <div class="post-meta">
+                        {% if post.date %}
+                        <span class="post-date">{{ post.date.strftime('%B %d, %Y') if post.date is not string else post.date }}</span>
+                        {% endif %}
+                        <span class="post-category cat-{{ post.category }}">{{ post.category }}</span>
+                    </div>
+                    <h2><a href="{{ url_for('blog_post', slug=post.slug) }}">{{ post.title }}</a></h2>
+                    {% if post.summary %}
+                    <p class="post-summary">{{ post.summary }}</p>
+                    {% endif %}
+                    <a href="{{ url_for('blog_post', slug=post.slug) }}" class="post-read-more">Read more →</a>
+                </article>
+                {% endfor %}
+            {% else %}
+                <p class="no-posts">No posts yet. Check back soon.</p>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>NC Elections Transparency Project</p>
+            <p>Data sourced from the <a href="https://www.ncsbe.gov/" target="_blank">NC State Board of Elections</a></p>
+        </div>
+    </footer>
+</body>
+</html>
