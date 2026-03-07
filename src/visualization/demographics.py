@@ -23,11 +23,11 @@ logger = logging.getLogger(__name__)
 
 GENDER_COLORS = {'M': '#4A90E2', 'F': '#E24A90', 'U': '#888888'}
 AGE_COLORS = {
-    '18-25': '#FF6B6B',
-    '26-35': '#4ECDC4',
-    '36-50': '#45B7D1',
-    '51-65': '#96CEB4',
-    '65+': '#FFEAA7'
+    '18-25': '#c5d1eb',
+    '26-35': '#92afd7',
+    '36-50': '#5a7684',
+    '51-65': '#395b50',
+    '65+': '#1f2f16'
 }
 
 def save_chart(fig, filename):

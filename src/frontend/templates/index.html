@@ -6,6 +6,73 @@
     <title>NC Elections Transparency Project</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
+<style>
+  .pull-quote-section {
+    background: rgb(97, 98, 156);
+    padding: 4rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pull-quote-inner {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .pull-quote-mark {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 7rem;
+    line-height: 0.6;
+    color: white;
+    opacity: 0.4;
+    user-select: none;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .pull-quote-text {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-style: italic;
+    font-size: 1.75rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: rgb(255, 255, 255);
+    letter-spacing: 0.01em;
+    margin: 0 0 2rem;
+    text-align: center;
+    border: none;
+    padding: 0;
+  }
+
+  .pull-quote-attribution {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: rgb(255, 255, 255);
+    opacity: 0.6;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .pull-quote-arrow {
+    color: var(--accent-color);
+    font-size: 1.2rem;
+    opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    .pull-quote-text {
+      font-size: 1.3rem;
+    }
+    .pull-quote-mark {
+      font-size: 5rem;
+    }
+  }
+</style>
+s
 <body>
    <nav>
         <div class="container">
@@ -19,6 +86,8 @@
         </div>
     </nav>
 
+
+
     <header class="hero">
         <div class="container">
             <h1>NC Elections<br>Transparency Project</h1>
@@ -28,18 +97,54 @@
         </div>
     </header>
 
+        
+       <!-- PULL QUOTE  -->
+<section class="pull-quote-section">
+  <div class="container">
+    <div class="pull-quote-inner">
+      <div class="pull-quote-mark">&ldquo;</div>
+      <blockquote class="pull-quote-text">
+        The ideal subject of totalitarian rule is not the convinced Nazi or the dedicated communist, but people for whom the distinction between fact and fiction... 
+        no longer exists 
+      </blockquote>
+      <div class="pull-quote-attribution">
+        <span class="pull-quote-arrow">→</span>
+        <span>Hannah Arendt</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
     <section class="about" id="about">
         <div class="container">
             <div class="about-content">
                 <h2>The Mission</h2>
                 <p>
-                    Democracy is fundamentally a participatory project. Understanding who is registered to vote, who isn't, and why, is essential to building a better democracy.
+                    Democracy is fundamentally a participatory project. Understanding who can participate - who is registered to vote, who isn't, and why - is essential to building a better democracy.
                     This platform aggregates official  data from the NC State Board of Elections, making complex electoral information 
                     accessible and understandable. We provide a picture of the shape, scope, and engagement of the electorate by analyzing the voter rolls and election results. 
                 </p>
             </div>
         </div>
     </section>
+
+           <!-- PULL QUOTE  -->
+<section class="pull-quote-section">
+  <div class="container">
+    <div class="pull-quote-inner">
+      <div class="pull-quote-mark">&ldquo;</div>
+      <blockquote class="pull-quote-text">
+        Honest and earnest criticism from those whose interests are most nearly touched,—criticism of writers by readers, 
+        of government by those governed, of leaders by those led,—this is the soul of democracy and the safeguard of modern society
+      </blockquote>
+      <div class="pull-quote-attribution">
+        <span class="pull-quote-arrow">→</span>
+        <span>W.E.B. Dubois</span>
+      </div>
+    </div>
+  </div>
+</section>
 
 
     <!-- Latest News Post -->
@@ -63,6 +168,21 @@
         </div>
     </section>
     {% endif %}
+
+    <section class="pull-quote-section">
+  <div class="container">
+    <div class="pull-quote-inner">
+      <div class="pull-quote-mark">&ldquo;</div>
+      <blockquote class="pull-quote-text">
+        All justice comes from God but if we know how to receive it we would have no need for government or laws
+      </blockquote>
+      <div class="pull-quote-attribution">
+        <span class="pull-quote-arrow">→</span>
+        <span>Jean-Jacques Rousseau</span>
+      </div>
+    </div>
+  </div>
+</section>
 
     <section class="visualizations" id="data">
         <div class="container">
@@ -133,6 +253,21 @@
             {% endif %}
         </div>
     </section>
+
+    <section class="pull-quote-section">
+  <div class="container">
+    <div class="pull-quote-inner">
+      <div class="pull-quote-mark">&ldquo;</div>
+      <blockquote class="pull-quote-text">
+        Democracy... would simply be our capacity to come together as reasonable human beings and work out the resulting common problems—since problems there will always be
+      </blockquote>
+      <div class="pull-quote-attribution">
+        <span class="pull-quote-arrow">→</span>
+        <span>David Graeber</span>
+      </div>
+    </div>
+  </div>
+</section>
 
     <section class="why-matters">
         <div class="container">

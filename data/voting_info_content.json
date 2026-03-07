@@ -13,7 +13,7 @@
           {
             "step": 1,
             "title": "Voter Check-In",
-            "description": "Poll workers verify your registration and ID. Your name is checked against the voter rolls - Are you Registered to vote?"
+            "description": "Poll workers verify your registration and ID. Your name is checked against the voter rolls - Are you registered to vote?"
           },
           {
             "step": 2,
@@ -38,7 +38,7 @@
           {
             "step": 6,
             "title": "Canvass",
-            "description": "Your County Board of Elections verifies and certifies results. This typically occurs within 10 days after the election and is a public meeting."
+            "description": "Your County Board of Elections verifies and certifies results. This typically occurs within 10 days after the election at a public meeting."
           },
           {
             "step": 7,
@@ -81,14 +81,16 @@
           },
           {
             "heading": "How to Register",
+            "description": "NOTE: You must be registered to vote either 25 days before Election Day or through Same-day Registration to be eligible to vote in an upcoming election",
             "list_items": [
               "Online at the NC State Board of Elections website",
               "By mail using a voter registration application",
+              "Through a third-party voter registration drive using a voter registration application",
               "In person at your county board of elections",
               "At the DMV when getting or renewing your driver's license",
-              "During early voting through same-day registration - but NOT on Election Day",
-              "*NOTE: You must be registered to vote either 25 days before Election Day or through Same-day Registration to be eligible to vote in an election*"
+              "During early voting through same-day registration at a voting site - but NOT on Election Day"
             ]
+            
           },
           {
             "heading": "What You Need",
@@ -103,8 +105,8 @@
               "Your signature",
               "OPTIONAL INFORMATION:",
               "Your gender, ethnicity, and race",
-              "Your preffered party affiliation (Democrat, Republican, or 'Unaffiliated' - our 'Independent'",
-              "Your contact information - just in case there are any problems with your registration"
+              "Your preffered party affiliation (Democrat, Republican, or 'Unaffiliated' - our 'Independent')",
+              "Your contact information - email or phone number - just in case there are any problems with your registration"
             ]
           },
           {
@@ -211,16 +213,16 @@
             "description": "Mid-term elections include federal, state, and local races.",
             "detail_items": [
               "U.S. House of Representatives (all seats)",
-              "U.S. Senate (1/2 seats up",
+              "U.S. Senate (1/2 seats up)",
               "State legislative races (NC House and Senate)",
               "County and municipal offices like County Commission and School Board",
-              "Judicial races"
+              "Judicial races (Supreme Court, Appeals Court)"
             ]
           },
           {
             "heading": "Finding Candidate Information",
             "list_items": [
-              "NC State Board of Elections publishes candidate lists and sample ballots",
+              "The NC State Board of Elections and your local County Board of Elections publish candidate lists and sample ballots",
               "Local news sources and candidate websites",
               "Voter guides from nonpartisan organizations",
               "Candidate forums and debates in your community"
@@ -230,7 +232,7 @@
             "heading": "How to Vote",
             "list_items": [
               "Early voting: Begins 17 days before Election Day at designated sites",
-              "Election Day voting: At your assigned precinct",
+              "Election Day voting: At your assigned precinct, unless voting provisionally out of precinct",
               "Absentee by-mail voting: Request ballot in advance, return by Election Day",
               "Military and overseas voting: Special procedures apply"
             ]
