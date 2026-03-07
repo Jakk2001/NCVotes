@@ -195,18 +195,17 @@ def api_demographics():
 
 @app.route("/api/counties")
 def api_counties():
-    """Return sorted list of all NC counties from the database."""
     try:
         from sqlalchemy import text
         engine = get_engine()
         with engine.connect() as conn:
             result = conn.execute(text(
-                "SELECT DISTINCT county_desc FROM raw.raw_voters "
-                "WHERE county_desc IS NOT NULL ORDER BY county_desc"
+                "SELECT county_desc FROM raw.demo_summary_counties ORDER BY county_desc"
             ))
             counties = [row[0] for row in result]
         return jsonify(counties)
     except Exception as e:
+        logger.error(f"Counties API error: {e}")
         return jsonify({'error': str(e)}), 500
 #API
 
