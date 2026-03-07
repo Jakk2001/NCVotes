@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voter Demographics - NC Elections Transparency Project</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
         .demo-grid {
@@ -33,12 +34,6 @@
             border: 1px solid #e0e0e0;
             border-radius: 4px;
             overflow: hidden;
-        }
-        
-        .chart-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
         }
         
         .section-divider {
@@ -87,6 +82,16 @@
     </header>
 
     <main>
+        <!-- County selector — add after page header, before first section-divider -->
+        <div class="container" style="padding: 1.5rem 0 0;">
+            <div style="display:flex; align-items:center; gap:1rem;">
+                <label for="county-select" style="font-weight:600;">Viewing data for:</label>
+                <select id="county-select" style="padding:0.5rem 1rem; font-size:1rem; border-radius:4px; border:1px solid #ccc; min-width:200px;">
+                    <option value="">Statewide</option>
+                </select>
+                <span id="loading-indicator" style="display:none; color:#666;">Loading...</span>
+            </div>
+        </div>
         <section class="detail-section">
             <div class="container">
                 
@@ -99,28 +104,28 @@
                     <div class="demo-card">
                         <h3>Party Affiliation</h3>
                         <div class="chart-container">
-                            <iframe src="{{ url_for('serve_chart', filename='party_breakdown.html') }}"></iframe>
+                            <div id="chart-party_breakdown" style="height:400px;"></div>
                         </div>
                     </div>
                     
                     <div class="demo-card">
                         <h3>Gender Distribution</h3>
                         <div class="chart-container">
-                            <iframe src="{{ url_for('serve_chart', filename='gender_breakdown.html') }}"></iframe>
+                            <div id="chart-gender_breakdown" style="height:400px;"></div>
                         </div>
                     </div>
                     
                     <div class="demo-card">
                         <h3>Age Groups</h3>
                         <div class="chart-container">
-                            <iframe src="{{ url_for('serve_chart', filename='age_breakdown.html') }}"></iframe>
+                            <div id="chart-age_breakdown" style="height:400px;"></div>
                         </div>
                     </div>
                     
                     <div class="demo-card">
                         <h3>Racial Demographics</h3>
                         <div class="chart-container">
-                            <iframe src="{{ url_for('serve_chart', filename='race_breakdown.html') }}"></iframe>
+                            <div id="chart-race_breakdown" style="height:400px;"></div>
                         </div>
                     </div>
                 </div>
@@ -134,7 +139,7 @@
                     <div class="demo-card">
                         <h3>Party by Race</h3>
                         <div class="chart-container">
-                            <iframe src="{{ url_for('serve_chart', filename='party_by_race.html') }}"></iframe>
+                            <div id="chart-party_by_race" style="height:400px;"></div>
                         </div>
                         <p>Distribution of party affiliation across different racial groups. Hover to see exact counts.</p>
                     </div>
@@ -142,7 +147,7 @@
                     <div class="demo-card">
                         <h3>Party by Gender</h3>
                         <div class="chart-container">
-                            <iframe src="{{ url_for('serve_chart', filename='party_by_gender.html') }}"></iframe>
+                            <div id="chart-party_by_gender" style="height:400px;"></div>
                         </div>
                         <p>Comparison of party registration between male and female voters.</p>
                     </div>
@@ -150,7 +155,7 @@
                     <div class="demo-card">
                         <h3>Party by Age Group</h3>
                         <div class="chart-container">
-                            <iframe src="{{ url_for('serve_chart', filename='party_by_age.html') }}"></iframe>
+                            <div id="chart-party_by_age" style="height:400px;"></div>
                         </div>
                         <p>How party affiliation varies across different age groups.</p>
                     </div>
@@ -165,7 +170,7 @@
                     <div class="demo-card">
                         <h3>Gender by Age Group</h3>
                         <div class="chart-container">
-                            <iframe src="{{ url_for('serve_chart', filename='gender_by_age.html') }}"></iframe>
+                            <div id="chart-gender_by_age" style="height:400px;"></div>
                         </div>
                         <p>Gender distribution across different age demographics.</p>
                     </div>
@@ -173,7 +178,7 @@
                     <div class="demo-card">
                         <h3>Gender by Race</h3>
                         <div class="chart-container">
-                            <iframe src="{{ url_for('serve_chart', filename='gender_by_race.html') }}"></iframe>
+                            <div id="chart-gender_by_race" style="height:400px;"></div>
                         </div>
                         <p>Gender composition within different racial groups.</p>
                     </div>
@@ -204,5 +209,60 @@
             <p>&copy; 2026 NC Elections Transparency Project. Data sourced from NC State Board of Elections.</p>
         </div>
     </footer>
+
+    <script>
+        const chartIds = [
+            'party_breakdown', 'age_breakdown', 'gender_breakdown', 'race_breakdown',
+            'party_by_race', 'party_by_gender', 'party_by_age', 'gender_by_age', 'gender_by_race'
+        ];
+
+        async function loadCounties() {
+            const res = await fetch('/api/counties');
+            const counties = await res.json();
+            const select = document.getElementById('county-select');
+            counties.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c;
+                opt.textContent = c.charAt(0) + c.slice(1).toLowerCase() + ' County';
+                select.appendChild(opt);
+            });
+        }
+
+        async function loadCharts(county = null) {
+            const indicator = document.getElementById('loading-indicator');
+            indicator.style.display = 'inline';
+            const url = county ? `/api/demographics?county=${encodeURIComponent(county)}` : '/api/demographics';
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data.error) {
+                    console.error('API error:', data.error);
+                    indicator.textContent = 'Error loading data';
+                    return;
+                }
+                chartIds.forEach(id => {
+                    const el = document.getElementById('chart-' + id);
+                    if (el && data[id]) {
+                        const fig = JSON.parse(data[id]);
+                        Plotly.react(el, fig.data, fig.layout, {responsive: true});
+                    }
+                });
+            } catch(e) {
+                console.error('Fetch error:', e);
+                indicator.textContent = 'Error loading data';
+                return;
+            }
+            indicator.style.display = 'none';
+            indicator.textContent = 'Loading...';
+        }
+
+        document.getElementById('county-select').addEventListener('change', function() {
+            loadCharts(this.value || null);
+        });
+
+        loadCounties();
+        loadCharts();
+    </script>
 </body>
+
 </html>

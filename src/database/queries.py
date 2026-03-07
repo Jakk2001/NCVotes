@@ -9,15 +9,16 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def get_party_by_race(engine: Engine) -> pd.DataFrame:
-    """Get voter registration counts by party and race."""
-    query = """
+def get_party_by_race(engine: Engine, county: str = None) -> pd.DataFrame:
+    county_filter = f"AND county_desc = '{county}'" if county else ""
+    query = f"""
     SELECT 
         party_cd as party,
         race_code as race,
         COUNT(*) as total
     FROM raw.raw_voters
     WHERE status_cd IN ('A', 'I')
+    {county_filter}
     GROUP BY party_cd, race_code
     ORDER BY party_cd, total DESC;
     """
@@ -27,15 +28,16 @@ def get_party_by_race(engine: Engine) -> pd.DataFrame:
         logger.error(f"Failed to fetch party by race: {e}")
         raise
 
-def get_party_by_gender(engine: Engine) -> pd.DataFrame:
-    """Get voter registration counts by party and gender."""
-    query = """
+def get_party_by_gender(engine: Engine, county: str = None) -> pd.DataFrame:
+    county_filter = f"AND county_desc = '{county}'" if county else ""
+    query = f"""
     SELECT 
         party_cd as party,
         gender_code as gender,
         COUNT(*) as total
     FROM raw.raw_voters
     WHERE status_cd IN ('A', 'I')
+    {county_filter}
     GROUP BY party_cd, gender_code
     ORDER BY party_cd, total DESC;
     """
@@ -45,9 +47,9 @@ def get_party_by_gender(engine: Engine) -> pd.DataFrame:
         logger.error(f"Failed to fetch party by gender: {e}")
         raise
 
-def get_party_by_age_group(engine: Engine) -> pd.DataFrame:
-    """Get voter registration counts by party and age group."""
-    query = """
+def get_party_by_age_group(engine: Engine, county: str = None) -> pd.DataFrame:
+    county_filter = f"AND county_desc = '{county}'" if county else ""
+    query = f"""
     SELECT 
         party_cd as party,
         age_group,
@@ -56,6 +58,7 @@ def get_party_by_age_group(engine: Engine) -> pd.DataFrame:
     WHERE status_cd IN ('A', 'I')
       AND age_group IS NOT NULL
       AND age_group != 'Unknown'
+    {county_filter}
     GROUP BY party_cd, age_group
     ORDER BY party_cd, 
              CASE age_group
@@ -72,14 +75,15 @@ def get_party_by_age_group(engine: Engine) -> pd.DataFrame:
         logger.error(f"Failed to fetch party by age group: {e}")
         raise
 
-def get_gender_breakdown(engine: Engine) -> pd.DataFrame:
-    """Get voter registration counts by gender."""
-    query = """
+def get_gender_breakdown(engine: Engine, county: str = None) -> pd.DataFrame:
+    county_filter = f"AND county_desc = '{county}'" if county else ""
+    query = f"""
     SELECT 
         gender_code as gender,
         COUNT(*) as total
     FROM raw.raw_voters
     WHERE status_cd IN ('A', 'I')
+    {county_filter}
     GROUP BY gender_code
     ORDER BY total DESC;
     """
@@ -89,9 +93,9 @@ def get_gender_breakdown(engine: Engine) -> pd.DataFrame:
         logger.error(f"Failed to fetch gender breakdown: {e}")
         raise
 
-def get_gender_by_age_group(engine: Engine) -> pd.DataFrame:
-    """Get voter registration counts by gender and age group."""
-    query = """
+def get_gender_by_age_group(engine: Engine, county: str = None) -> pd.DataFrame:
+    county_filter = f"AND county_desc = '{county}'" if county else ""
+    query = f"""
     SELECT 
         gender_code as gender,
         age_group,
@@ -100,6 +104,7 @@ def get_gender_by_age_group(engine: Engine) -> pd.DataFrame:
     WHERE status_cd IN ('A', 'I')
       AND age_group IS NOT NULL
       AND age_group != 'Unknown'
+    {county_filter}
     GROUP BY gender_code, age_group
     ORDER BY gender_code,
              CASE age_group
@@ -116,15 +121,16 @@ def get_gender_by_age_group(engine: Engine) -> pd.DataFrame:
         logger.error(f"Failed to fetch gender by age group: {e}")
         raise
 
-def get_gender_by_race(engine: Engine) -> pd.DataFrame:
-    """Get voter registration counts by gender and race."""
-    query = """
+def get_gender_by_race(engine: Engine, county: str = None) -> pd.DataFrame:
+    county_filter = f"AND county_desc = '{county}'" if county else ""
+    query = f"""
     SELECT 
         gender_code as gender,
         race_code as race,
         COUNT(*) as total
     FROM raw.raw_voters
     WHERE status_cd IN ('A', 'I')
+    {county_filter}
     GROUP BY gender_code, race_code
     ORDER BY gender_code, total DESC;
     """
@@ -134,9 +140,9 @@ def get_gender_by_race(engine: Engine) -> pd.DataFrame:
         logger.error(f"Failed to fetch gender by race: {e}")
         raise
 
-def get_age_group_breakdown(engine: Engine) -> pd.DataFrame:
-    """Get voter registration counts by age group."""
-    query = """
+def get_age_group_breakdown(engine: Engine, county: str = None) -> pd.DataFrame:
+    county_filter = f"AND county_desc = '{county}'" if county else ""
+    query = f"""
     SELECT 
         age_group,
         COUNT(*) as total
@@ -144,6 +150,7 @@ def get_age_group_breakdown(engine: Engine) -> pd.DataFrame:
     WHERE status_cd IN ('A', 'I')
       AND age_group IS NOT NULL
       AND age_group != 'Unknown'
+    {county_filter}
     GROUP BY age_group
     ORDER BY CASE age_group
                 WHEN '18-25' THEN 1
@@ -159,14 +166,15 @@ def get_age_group_breakdown(engine: Engine) -> pd.DataFrame:
         logger.error(f"Failed to fetch age group breakdown: {e}")
         raise
 
-def get_race_breakdown(engine: Engine) -> pd.DataFrame:
-    """Get voter registration counts by race."""
-    query = """
+def get_race_breakdown(engine: Engine, county: str = None) -> pd.DataFrame:
+    county_filter = f"AND county_desc = '{county}'" if county else ""
+    query = f"""
     SELECT 
         race_code as race,
         COUNT(*) as total
     FROM raw.raw_voters
     WHERE status_cd IN ('A', 'I')
+    {county_filter}
     GROUP BY race_code
     ORDER BY total DESC;
     """
@@ -176,23 +184,15 @@ def get_race_breakdown(engine: Engine) -> pd.DataFrame:
         logger.error(f"Failed to fetch race breakdown: {e}")
         raise
 
-def get_registration_by_party(engine: Engine) -> pd.DataFrame:
-    """
-    Get total voter registration counts by party.
-    Counts Active + Inactive voters only (excludes Removed and Denied).
-    
-    Args:
-        engine: SQLAlchemy engine
-        
-    Returns:
-        DataFrame with columns: party, total
-    """
-    query = """
+def get_registration_by_party(engine: Engine, county: str = None) -> pd.DataFrame:
+    county_filter = f"AND county_desc = '{county}'" if county else ""
+    query = f"""
     SELECT 
         COALESCE(party_cd, 'UNK') as party, 
         COUNT(*) as total
     FROM raw.raw_voters
     WHERE status_cd IN ('A', 'I')
+    {county_filter}
     GROUP BY party_cd
     ORDER BY total DESC;
     """
@@ -201,7 +201,6 @@ def get_registration_by_party(engine: Engine) -> pd.DataFrame:
     except Exception as e:
         logger.error(f"Failed to fetch registration by party: {e}")
         raise
-
 def get_registration_trends(engine: Engine) -> pd.DataFrame:
     """
     Get voter registration trends over time.

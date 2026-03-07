@@ -51,6 +51,156 @@ if os.getenv('ENVIRONMENT') == 'production':
 # Add this route to src/frontend/app.py
 # Place it before the main() function, after the other route definitions
 
+#DEMOS
+# In-memory cache: { "STATE": {...json...}, "WAKE": {...json...}, ... }
+_demographics_cache = {}
+
+def build_demographics_json(county: str = None) -> dict:
+    """Run all demographic queries and return Plotly chart JSON."""
+    import plotly.graph_objects as go
+    import pandas as pd
+    from src.database.queries import (
+        get_age_group_breakdown, get_race_breakdown, get_gender_breakdown,
+        get_registration_by_party, get_party_by_race, get_party_by_gender,
+        get_party_by_age_group, get_gender_by_age_group, get_gender_by_race
+    )
+
+    PARTY_COLORS = {"DEM": "#3366cc", "REP": "#dc3912", "UNA": "#888888",
+                    "LIB": "#ff9900", "GRE": "#109618"}
+    AGE_ORDER = ['18-25', '26-35', '36-50', '51-65', '65+']
+
+    engine = get_engine()
+    charts = {}
+# Party breakdown
+    df = get_registration_by_party(engine, county)
+    fig = go.Figure(go.Pie(labels=df['party'].tolist(), values=df['total'].tolist(),
+        marker=dict(colors=[PARTY_COLORS.get(p, '#888') for p in df['party']],
+                    line=dict(color='white', width=2)),
+        hovertemplate='<b>%{label}</b><br>Count: %{value:,}<br>%{percent}<extra></extra>'))
+    fig.update_layout(title='Party Affiliation', height=400)
+    charts['party_breakdown'] = fig.to_json()
+
+    # Age breakdown
+    df = get_age_group_breakdown(engine, county)
+    fig = go.Figure(go.Bar(x=df['age_group'].tolist(), y=df['total'].tolist(),
+        hovertemplate='<b>%{x}</b><br>Count: %{y:,}<extra></extra>'))
+    fig.update_layout(title='Age Groups', height=400)
+    charts['age_breakdown'] = fig.to_json()
+
+    # Gender breakdown
+    df = get_gender_breakdown(engine, county)
+    fig = go.Figure(go.Pie(labels=df['gender'].tolist(), values=df['total'].tolist(),
+        hovertemplate='<b>%{label}</b><br>Count: %{value:,}<br>%{percent}<extra></extra>'))
+    fig.update_layout(title='Gender Distribution', height=400)
+    charts['gender_breakdown'] = fig.to_json()
+
+    # Race breakdown
+    df = get_race_breakdown(engine, county)
+    top = df.nlargest(6, 'total')
+    others = df[~df['race'].isin(top['race'])]['total'].sum()
+    if others > 0:
+        import pandas as pd
+        top = pd.concat([top, pd.DataFrame({'race': ['Other'], 'total': [int(others)]})])
+    fig = go.Figure(go.Pie(labels=top['race'].tolist(), values=top['total'].tolist(),
+        hovertemplate='<b>%{label}</b><br>Count: %{value:,}<br>%{percent}<extra></extra>'))
+    fig.update_layout(title='Race/Ethnicity', height=400)
+    charts['race_breakdown'] = fig.to_json()
+
+    # Party by race
+    df = get_party_by_race(engine, county)
+    top_races = df.groupby('race')['total'].sum().nlargest(6).index
+    df = df[df['race'].isin(top_races)]
+    fig = go.Figure()
+    for party, color in PARTY_COLORS.items():
+        pdf = df[df['party'] == party]
+        if not pdf.empty:
+            fig.add_trace(go.Bar(name=party, x=pdf['race'].tolist(), y=pdf['total'].tolist(),
+                marker_color=color))
+    fig.update_layout(title='Party by Race', barmode='group', height=400)
+    charts['party_by_race'] = fig.to_json()
+
+    # Party by gender
+    df = get_party_by_gender(engine, county)
+    fig = go.Figure()
+    for party, color in PARTY_COLORS.items():
+        pdf = df[df['party'] == party]
+        if not pdf.empty:
+            fig.add_trace(go.Bar(name=party, x=pdf['gender'].tolist(), y=pdf['total'].tolist(),
+                marker_color=color))
+    fig.update_layout(title='Party by Gender', barmode='group', height=400)
+    charts['party_by_gender'] = fig.to_json()
+
+    # Party by age
+    df = get_party_by_age_group(engine, county)
+    fig = go.Figure()
+    for party, color in PARTY_COLORS.items():
+        pdf = df[df['party'] == party]
+        if not pdf.empty:
+            fig.add_trace(go.Bar(name=party, x=pdf['age_group'].tolist(), y=pdf['total'].tolist(),
+                marker_color=color))
+    fig.update_layout(title='Party by Age Group', barmode='group', height=400)
+    charts['party_by_age'] = fig.to_json()
+
+    # Gender by age
+    df = get_gender_by_age_group(engine, county)
+    fig = go.Figure()
+    for gender in df['gender'].unique():
+        gdf = df[df['gender'] == gender]
+        fig.add_trace(go.Bar(name=gender, x=gdf['age_group'].tolist(), y=gdf['total'].tolist()))
+    fig.update_layout(title='Gender by Age Group', barmode='group', height=400)
+    charts['gender_by_age'] = fig.to_json()
+
+    # Gender by race
+    df = get_gender_by_race(engine, county)
+    top_races = df.groupby('race')['total'].sum().nlargest(6).index
+    df = df[df['race'].isin(top_races)]
+    fig = go.Figure()
+    for gender in df['gender'].unique():
+        gdf = df[df['gender'] == gender]
+        fig.add_trace(go.Bar(name=gender, x=gdf['race'].tolist(), y=gdf['total'].tolist()))
+    fig.update_layout(title='Gender by Race', barmode='group', height=400)
+    charts['gender_by_race'] = fig.to_json()
+    return charts
+#DEMOS
+
+#API
+@app.route("/api/demographics")
+def api_demographics():
+    """Return Plotly chart JSON for all demographics charts, optionally filtered by county."""
+    from flask import request
+    county = request.args.get('county', None)  # None = statewide
+    cache_key = county if county else 'STATE'
+
+    
+
+    if cache_key not in _demographics_cache:
+        try:
+            _demographics_cache[cache_key] = build_demographics_json(county)
+        except Exception as e:
+            logger.error(f"Demographics API error: {e}")
+            return jsonify({'error': str(e)}), 500
+
+    return jsonify(_demographics_cache[cache_key])
+
+
+
+@app.route("/api/counties")
+def api_counties():
+    """Return sorted list of all NC counties from the database."""
+    try:
+        from sqlalchemy import text
+        engine = get_engine()
+        with engine.connect() as conn:
+            result = conn.execute(text(
+                "SELECT DISTINCT county_desc FROM raw.raw_voters "
+                "WHERE county_desc IS NOT NULL ORDER BY county_desc"
+            ))
+            counties = [row[0] for row in result]
+        return jsonify(counties)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+#API
+
 @app.route("/voting-info")
 def voting_info():
     """Voting and elections information page."""
