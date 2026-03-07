@@ -119,6 +119,9 @@ def load_raw_voters(chunksize: int = 10000) -> bool:
             # Add to chunk before writing to database
             chunk['age_group'] = chunk['birth_year'].apply(calculate_age_group)
             
+            chunk['registr_dt'] = pd.to_datetime(
+                chunk['registr_dt'], format='%m/%d/%Y', errors='coerce'
+            ).dt.date
             
             # Write to database - use None method for simpler inserts
             chunk.to_sql(
