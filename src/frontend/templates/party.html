@@ -92,12 +92,14 @@
     <main>
         <!-- County selector — add after page header, before first section-divider -->
         <div class="container" style="padding: 1.5rem 0 0;">
-            <div style="display:flex; align-items:center; gap:1rem;">
-                <label for="county-select" style="font-weight:600;">Viewing data for:</label>
-                <select id="county-select" style="padding:0.5rem 1rem; font-size:1rem; border-radius:4px; border:1px solid #ccc; min-width:200px;">
-                    <option value="">Statewide</option>
-                </select>
-                <span id="loading-indicator" style="display:none; color:#666;">Loading...</span>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:0.5rem;">
+                <label for="county-select" style="font-weight:600; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.05em; color:#555;">Viewing data for</label>
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                    <select id="county-select" style="padding:0.5rem 2rem 0.5rem 1rem; font-size:1rem; border-radius:6px; border:1px solid #ccc; min-width:220px; background:#fff; cursor:pointer; appearance:auto;">
+                        <option value="">Statewide</option>
+                    </select>
+                    <span id="loading-indicator" style="display:none; color:#999; font-size:0.9rem; font-style:italic;">Loading...</span>
+                </div>
             </div>
         </div>
         <section class="detail-section">
@@ -245,9 +247,14 @@
             });
         }
 
+        // NEW
         async function loadCharts(county = null) {
             const indicator = document.getElementById('loading-indicator');
+            const select = document.getElementById('county-select');
             indicator.style.display = 'inline';
+            select.disabled = true;
+            select.style.opacity = '0.5';
+            select.style.cursor = 'not-allowed';
             const url = county ? `/api/demographics?county=${encodeURIComponent(county)}` : '/api/demographics';
             try {
                 const res = await fetch(url);
@@ -271,6 +278,9 @@
             }
             indicator.style.display = 'none';
             indicator.textContent = 'Loading...';
+            select.disabled = false;
+            select.style.opacity = '1';
+            select.style.cursor = 'pointer';
         }
 
         document.getElementById('county-select').addEventListener('change', function() {
