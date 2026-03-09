@@ -17,6 +17,7 @@ from src.database.queries import get_registration_by_party, get_registration_by_
 from config.settings import CHARTS_DIR, PROJECT_ROOT
 import yaml
 import markdown
+from config.settings import PARTY_COLORS
 
 logging.basicConfig(
     level=logging.INFO,
@@ -65,10 +66,22 @@ def build_demographics_json(county: str = None) -> dict:
         get_party_by_age_group, get_gender_by_age_group, get_gender_by_race
     )
 
-    PARTY_COLORS = {"DEM": "#3366cc", "REP": "#dc3912", "UNA": "#888888",
-                    "LIB": "#ff9900", "GRE": "#109618"}
     engine = get_engine()
     charts = {}
+
+    GENDER_COLORS = {
+        "F":  "#ee68d8",
+        "M": "#4eb0f1",
+        "U": "#888888",
+    }
+
+    AGE_COLORS = {
+        '18-25':   "#ee68d8",
+        '26-35':  "#e39ec1",
+        '36-45': "#c47ac0",
+        '46-65': "#77567a",
+        '65+':  "#2f323a"
+    }
 
     if county:
         df_party = get_registration_by_party(engine, county)
@@ -102,12 +115,16 @@ def build_demographics_json(county: str = None) -> dict:
 
     # Age breakdown
     fig = go.Figure(go.Bar(x=df_age['age_group'].tolist(), y=df_age['total'].tolist(),
+        marker=dict(colors=[AGE_COLORS.get(a, '#888') for a in df_age['age_group']], 
+                     line=dict(color='white', width=2)),
         hovertemplate='<b>%{x}</b><br>Count: %{y:,}<extra></extra>'))
     fig.update_layout(title='Age Groups', height=400)
     charts['age_breakdown'] = fig.to_json()
 
     # Gender breakdown
     fig = go.Figure(go.Pie(labels=df_gender['gender'].tolist(), values=df_gender['total'].tolist(),
+        marker=dict(colors=[GENDER_COLORS.get(g, '#888') for g in df_gender['gender']], 
+                     line=dict(color='white', width=2)),
         hovertemplate='<b>%{label}</b><br>Count: %{value:,}<br>%{percent}<extra></extra>'))
     fig.update_layout(title='Gender Distribution', height=400)
     charts['gender_breakdown'] = fig.to_json()
