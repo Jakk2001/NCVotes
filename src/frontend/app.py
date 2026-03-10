@@ -67,6 +67,13 @@ def build_demographics_json(county: str = None) -> dict:
 
     PARTY_COLORS = {"DEM": "#3366cc", "REP": "#dc3912", "UNA": "#888888",
                     "LIB": "#ff9900", "GRE": "#109618"}
+    
+    GENDER_COLORS = {"M": "#4A90E2", "F": "#E24A90", "U": "#888888"}
+    AGE_COLORS = {"18-25": "#c5d1eb", "26-35": "#92afd7", "36-50": "#5a7684",
+              "51-65": "#395b50", "65+": "#1f2f16"}
+    RACE_COLORS = {"W": "#4A90E2", "B": "#2E7D32", "A": "#F57C00",
+               "I": "#9C27B0", "M": "#FF6B6B", "O": "#795548", "U": "#888888"}
+
     engine = get_engine()
     charts = {}
 
@@ -102,12 +109,15 @@ def build_demographics_json(county: str = None) -> dict:
 
     # Age breakdown
     fig = go.Figure(go.Bar(x=df_age['age_group'].tolist(), y=df_age['total'].tolist(),
+        marker_color=[AGE_COLORS.get(a, '#888888') for a in df_age['age_group']],
         hovertemplate='<b>%{x}</b><br>Count: %{y:,}<extra></extra>'))
     fig.update_layout(title='Age Groups', height=400)
     charts['age_breakdown'] = fig.to_json()
 
     # Gender breakdown
     fig = go.Figure(go.Pie(labels=df_gender['gender'].tolist(), values=df_gender['total'].tolist(),
+        marker=dict(colors=[GENDER_COLORS.get(g, '#888888') for g in df_gender['gender']],
+                    line=dict(color='white', width=2)),
         hovertemplate='<b>%{label}</b><br>Count: %{value:,}<br>%{percent}<extra></extra>'))
     fig.update_layout(title='Gender Distribution', height=400)
     charts['gender_breakdown'] = fig.to_json()
@@ -118,9 +128,12 @@ def build_demographics_json(county: str = None) -> dict:
     if others > 0:
         top = pd.concat([top, pd.DataFrame({'race': ['Other'], 'total': [int(others)]})])
     fig = go.Figure(go.Pie(labels=top['race'].tolist(), values=top['total'].tolist(),
-        hovertemplate='<b>%{label}</b><br>Count: %{value:,}<br>%{percent}<extra></extra>'))
+    marker=dict(colors=[RACE_COLORS.get(r, '#888888') for r in top['race']],
+                line=dict(color='white', width=2)),
+    hovertemplate='<b>%{label}</b><br>Count: %{value:,}<br>%{percent}<extra></extra>'))
     fig.update_layout(title='Race/Ethnicity', height=400)
     charts['race_breakdown'] = fig.to_json()
+
 
     # Party by race
     top_races = df_pbr.groupby('race')['total'].sum().nlargest(6).index
@@ -155,17 +168,17 @@ def build_demographics_json(county: str = None) -> dict:
     fig = go.Figure()
     for gender in df_gba['gender'].unique():
         gdf = df_gba[df_gba['gender'] == gender]
-        fig.add_trace(go.Bar(name=gender, x=gdf['age_group'].tolist(), y=gdf['total'].tolist()))
+        fig.add_trace(go.Bar(name=gender, x=gdf['age_group'].tolist(), y=gdf['total'].tolist(),
+            marker_color=GENDER_COLORS.get(gender, '#888888')))
     fig.update_layout(title='Gender by Age Group', barmode='group', height=400)
     charts['gender_by_age'] = fig.to_json()
 
     # Gender by race
-    top_races = df_gbr.groupby('race')['total'].sum().nlargest(6).index
-    df_gbr = df_gbr[df_gbr['race'].isin(top_races)]
     fig = go.Figure()
     for gender in df_gbr['gender'].unique():
         gdf = df_gbr[df_gbr['gender'] == gender]
-        fig.add_trace(go.Bar(name=gender, x=gdf['race'].tolist(), y=gdf['total'].tolist()))
+        fig.add_trace(go.Bar(name=gender, x=gdf['race'].tolist(), y=gdf['total'].tolist(),
+            marker_color=GENDER_COLORS.get(gender, '#888888')))
     fig.update_layout(title='Gender by Race', barmode='group', height=400)
     charts['gender_by_race'] = fig.to_json()
 
