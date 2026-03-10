@@ -500,7 +500,9 @@ def load_blog_posts():
             slug = md_file.stem
             # Strip leading date prefix if present (YYYY-MM-DD-)
             if len(slug) > 11 and slug[4] == '-' and slug[7] == '-' and slug[10] == '-':
-                slug = slug[11:]
+                date_prefix = slug[:10]  # e.g. "2026-02-23"
+                name_part = slug[11:]    # e.g. "analysis"
+                slug = f"{date_prefix}-{name_part}"
             
             posts.append({
                 'slug': slug,
