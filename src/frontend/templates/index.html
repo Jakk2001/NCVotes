@@ -84,7 +84,12 @@ s
 <body>
    <nav>
         <div class="container">
-            <a href="{{ url_for('index') }}" class="logo">NC ELECTIONS TRANSPARENCY</a>
+            <a href="{{ url_for('index') }}" class="logo" style="display: flex; align-items: center; gap: 0.6rem;">
+                <img src="{{ url_for('static', filename='images/NCET.png') }}" 
+                    alt="NCET Logo" 
+                    style="height:  35px; width: auto;">
+                NC ELECTIONS TRANSPARENCY
+            </a>
             <ul class="nav-links">
                 <li><a href="#about">About</a></li>
                 <li><a href="#data">Data</a></li>
@@ -97,13 +102,18 @@ s
 
 
     <header class="hero">
-        <div class="container">
+    <div class="container">
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
             <h1>NC Elections<br>Transparency Project</h1>
-            <p class="tagline">
-                For accessible, understandable, and transparent elections in North Carolina
-            </p>
+            <img src="{{ url_for('static', filename='images/NCET.png') }}" 
+                 alt="NCET Logo" 
+                 style="height: 280px; width: auto;">
         </div>
-    </header>
+        <p class="tagline">
+            For accessible, understandable, and transparent elections in North Carolina
+        </p>
+    </div>
+</header>
 
         
        <!-- PULL QUOTE  -->
