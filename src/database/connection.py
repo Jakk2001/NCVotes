@@ -24,7 +24,10 @@ def get_engine() -> Engine:
         try:
             _engine = create_engine(
                 get_db_url(),
-                pool_pre_ping=True,  # Verify connections before using
+                pool_pre_ping=True,
+                pool_recycle=1800,        # recycle connections every 30 min
+                pool_timeout=60,
+                connect_args={"connect_timeout": 60},
                 echo=False,
             )
             logger.info("Database engine created successfully")

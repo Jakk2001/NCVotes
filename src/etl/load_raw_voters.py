@@ -85,58 +85,59 @@ def load_raw_voters(chunksize: int = 10000) -> bool:
         ):
             chunk_counter += 1
             
-            # Strip quotes from column names if present
             chunk.columns = chunk.columns.str.strip().str.replace('"', '')
 
-            
-            # After loading each chunk, add this:
             from datetime import datetime
-
             current_year = datetime.now().year
 
             def calculate_age_group(birth_year):
-                """Calculate age group from birth year."""
                 if pd.isna(birth_year) or not str(birth_year).isdigit():
                     return 'Unknown'
-                
                 try:
                     age = current_year - int(birth_year)
-                    if 18 <= age <= 25:
-                        return '18-25'
-                    elif 26 <= age <= 35:
-                        return '26-35'
-                    elif 36 <= age <= 50:
-                        return '36-50'
-                    elif 51 <= age <= 65:
-                        return '51-65'
-                    elif age > 65:
-                        return '65+'
-                    else:
-                        return 'Unknown'
+                    if 18 <= age <= 25: return '18-25'
+                    elif 26 <= age <= 35: return '26-35'
+                    elif 36 <= age <= 50: return '36-50'
+                    elif 51 <= age <= 65: return '51-65'
+                    elif age > 65: return '65+'
+                    else: return 'Unknown'
                 except:
                     return 'Unknown'
 
-            # Add to chunk before writing to database
             chunk['age_group'] = chunk['birth_year'].apply(calculate_age_group)
-            
             chunk['registr_dt'] = pd.to_datetime(
                 chunk['registr_dt'], format='%m/%d/%Y', errors='coerce'
             ).dt.date
-            
-            # Write to database - use None method for simpler inserts
-            chunk.to_sql(
-                'raw_voters',
-                engine,
-                schema='raw',
-                if_exists='append',
-                index=False,
-                method=None  # Use default insert method (slower but more stable)
-            )
-            
+
+            # Retry loop with fresh connection per chunk
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    fresh_engine = get_engine()
+                    with fresh_engine.connect() as conn:
+                        chunk.to_sql(
+                            'raw_voters',
+                            conn,
+                            schema='raw',
+                            if_exists='append',
+                            index=False,
+                            method=None
+                        )
+                        conn.commit()
+                    break  # success
+                except Exception as e:
+                    logger.warning(f"Chunk {chunk_counter} attempt {attempt+1} failed: {e}")
+                    if attempt < max_retries - 1:
+                        from src.database.connection import close_engine
+                        close_engine()  # force new connection next attempt
+                        import time
+                        time.sleep(5)
+                    else:
+                        raise
+
             rows_loaded += len(chunk)
             percent_complete = (rows_loaded / total_rows) * 100
-            
-            # Log every 10 chunks or at milestones
+
             if chunk_counter % 10 == 0 or rows_loaded % 100000 < chunksize:
                 logger.info(
                     f"Progress: {rows_loaded:,}/{total_rows:,} rows "
