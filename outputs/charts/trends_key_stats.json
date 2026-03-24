@@ -1,298 +1,31 @@
 {
-  "current_total": 7708542,
+  "current_total": 7719651,
   "new_registrations": {
-    "2_weeks": 3117,
-    "last_election": 169110,
-    "last_general": 545534,
-    "2_years": 1244234,
-    "4_years": 2154343
+    "2_weeks": 0,
+    "last_election": 0,
+    "last_general": 0,
+    "2_years": 0,
+    "4_years": 0
   },
   "party_new_regs": {
-    "2_weeks": [
-      {
-        "party": "DEM",
-        "total": 1447
-      },
-      {
-        "party": "REP",
-        "total": 537
-      },
-      {
-        "party": "UNA",
-        "total": 1133
-      }
-    ],
-    "last_election": [
-      {
-        "party": "DEM",
-        "total": 35974
-      },
-      {
-        "party": "GRE",
-        "total": 230
-      },
-      {
-        "party": "LIB",
-        "total": 912
-      },
-      {
-        "party": "REP",
-        "total": 39420
-      },
-      {
-        "party": "UNA",
-        "total": 92574
-      }
-    ],
-    "last_general": [
-      {
-        "party": "DEM",
-        "total": 118525
-      },
-      {
-        "party": "GRE",
-        "total": 685
-      },
-      {
-        "party": "LIB",
-        "total": 3496
-      },
-      {
-        "party": "REP",
-        "total": 136975
-      },
-      {
-        "party": "UNA",
-        "total": 285853
-      }
-    ],
-    "2_years": [
-      {
-        "party": "DEM",
-        "total": 296278
-      },
-      {
-        "party": "GRE",
-        "total": 1820
-      },
-      {
-        "party": "LIB",
-        "total": 7950
-      },
-      {
-        "party": "REP",
-        "total": 320471
-      },
-      {
-        "party": "UNA",
-        "total": 617715
-      }
-    ],
-    "4_years": [
-      {
-        "party": "DEM",
-        "total": 516864
-      },
-      {
-        "party": "GRE",
-        "total": 3134
-      },
-      {
-        "party": "LIB",
-        "total": 15611
-      },
-      {
-        "party": "REP",
-        "total": 561996
-      },
-      {
-        "party": "UNA",
-        "total": 1056738
-      }
-    ]
+    "2_weeks": [],
+    "last_election": [],
+    "last_general": [],
+    "2_years": [],
+    "4_years": []
   },
   "age_new_regs": {
-    "2_weeks": [
-      {
-        "age_group": "18-25",
-        "total": 1068
-      },
-      {
-        "age_group": "26-35",
-        "total": 643
-      },
-      {
-        "age_group": "36-50",
-        "total": 443
-      },
-      {
-        "age_group": "51-65",
-        "total": 452
-      },
-      {
-        "age_group": "65+",
-        "total": 511
-      }
-    ],
-    "last_election": [
-      {
-        "age_group": "18-25",
-        "total": 217503
-      },
-      {
-        "age_group": "26-35",
-        "total": 105817
-      },
-      {
-        "age_group": "36-50",
-        "total": 93672
-      },
-      {
-        "age_group": "51-65",
-        "total": 75722
-      },
-      {
-        "age_group": "65+",
-        "total": 52820
-      }
-    ],
-    "last_general": [
-      {
-        "age_group": "18-25",
-        "total": 217503
-      },
-      {
-        "age_group": "26-35",
-        "total": 105817
-      },
-      {
-        "age_group": "36-50",
-        "total": 93672
-      },
-      {
-        "age_group": "51-65",
-        "total": 75722
-      },
-      {
-        "age_group": "65+",
-        "total": 52820
-      }
-    ],
-    "2_years": [
-      {
-        "age_group": "18-25",
-        "total": 380990
-      },
-      {
-        "age_group": "26-35",
-        "total": 297359
-      },
-      {
-        "age_group": "36-50",
-        "total": 255615
-      },
-      {
-        "age_group": "51-65",
-        "total": 184520
-      },
-      {
-        "age_group": "65+",
-        "total": 125750
-      }
-    ],
-    "4_years": [
-      {
-        "age_group": "18-25",
-        "total": 651333
-      },
-      {
-        "age_group": "26-35",
-        "total": 486812
-      },
-      {
-        "age_group": "36-50",
-        "total": 446439
-      },
-      {
-        "age_group": "51-65",
-        "total": 327811
-      },
-      {
-        "age_group": "65+",
-        "total": 241948
-      }
-    ]
+    "2_weeks": [],
+    "last_election": [],
+    "last_general": [],
+    "2_years": [],
+    "4_years": []
   },
   "gender_new_regs": {
-    "2_weeks": [
-      {
-        "gender": "F",
-        "total": 1291
-      },
-      {
-        "gender": "M",
-        "total": 1046
-      },
-      {
-        "gender": "U",
-        "total": 780
-      }
-    ],
-    "last_election": [
-      {
-        "gender": "F",
-        "total": 74235
-      },
-      {
-        "gender": "M",
-        "total": 68553
-      },
-      {
-        "gender": "U",
-        "total": 26322
-      }
-    ],
-    "last_general": [
-      {
-        "gender": "F",
-        "total": 247647
-      },
-      {
-        "gender": "M",
-        "total": 228272
-      },
-      {
-        "gender": "U",
-        "total": 69614
-      }
-    ],
-    "2_years": [
-      {
-        "gender": "F",
-        "total": 534464
-      },
-      {
-        "gender": "M",
-        "total": 474508
-      },
-      {
-        "gender": "U",
-        "total": 235260
-      }
-    ],
-    "4_years": [
-      {
-        "gender": "F",
-        "total": 945067
-      },
-      {
-        "gender": "M",
-        "total": 854536
-      },
-      {
-        "gender": "U",
-        "total": 354737
-      }
-    ]
+    "2_weeks": [],
+    "last_election": [],
+    "last_general": [],
+    "2_years": [],
+    "4_years": []
   }
 }
