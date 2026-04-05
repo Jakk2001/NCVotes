@@ -66,5 +66,34 @@
       "size_bytes": 371,
       "extracted_from": "ncvoter_statewide_20260323_053826.zip"
     }
+  },
+  {
+    "filename": "ncvoter_statewide_20260330_025013.zip",
+    "url": "https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvoter_Statewide.zip",
+    "file_type": "registration_zip",
+    "downloaded_at": "2026-03-30T02:50:42Z",
+    "metadata": {
+      "size_bytes": 512005448
+    }
+  },
+  {
+    "filename": "ncvoter_Statewide.txt",
+    "url": "https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvoter_Statewide.zip",
+    "file_type": "registration_data",
+    "downloaded_at": "2026-03-30T02:50:55Z",
+    "metadata": {
+      "size_bytes": 4270880567,
+      "extracted_from": "ncvoter_statewide_20260330_025013.zip"
+    }
+  },
+  {
+    "filename": "ncvoter_Statewide_sample.txt",
+    "url": "https://s3.amazonaws.com/dl.ncsbe.gov/data/ncvoter_Statewide.zip",
+    "file_type": "registration_data",
+    "downloaded_at": "2026-03-30T02:50:55Z",
+    "metadata": {
+      "size_bytes": 371,
+      "extracted_from": "ncvoter_statewide_20260330_025013.zip"
+    }
   }
 ]
