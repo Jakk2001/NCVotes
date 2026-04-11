@@ -9,8 +9,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-LAST_ELECTION = '11/04/2025'
-LAST_GENERAL = '11/05/2024'
+LAST_ELECTION = '2025-11-04'
+LAST_GENERAL = '2024-11-05'
 
 def get_key_stats(engine: Engine) -> dict:
     """
@@ -59,11 +59,11 @@ def get_new_registrations_summary(engine: Engine) -> dict:
     # Calculate date thresholds
     today = datetime.now()
     dates = {
-        '2_weeks': (today - timedelta(weeks=2)).strftime('%m/%d/%Y'),
+        '2_weeks': (today - timedelta(weeks=2)).strftime('%Y-%m-%d'),
         'last_election': LAST_ELECTION,
         'last_general': LAST_GENERAL, 
-        '2_years': (today - timedelta(days=730)).strftime('%m/%d/%Y'),
-        '4_years': (today - timedelta(days=1460)).strftime('%m/%d/%Y')
+        '2_years': (today - timedelta(days=730)).strftime('%Y-%m-%d'),
+        '4_years': (today - timedelta(days=1460)).strftime('%Y-%m-%d')
     }
     
     results = {}
@@ -94,11 +94,11 @@ def get_party_new_registrations_summary(engine: Engine) -> dict:
     
     today = datetime.now()
     dates = {
-        '2_weeks': (today - timedelta(weeks=2)).strftime('%m/%d/%Y'),
+        '2_weeks': (today - timedelta(weeks=2)).strftime('%Y-%m-%d'),
         'last_election': LAST_ELECTION,
         'last_general': LAST_GENERAL,
-        '2_years': (today - timedelta(days=730)).strftime('%m/%d/%Y'),
-        '4_years': (today - timedelta(days=1460)).strftime('%m/%d/%Y')
+        '2_years': (today - timedelta(days=730)).strftime('%Y-%m-%d'),
+        '4_years': (today - timedelta(days=1460)).strftime('%Y-%m-%d')
     }
     
     results = {}
@@ -134,11 +134,11 @@ def get_age_new_registrations_summary(engine: Engine) -> dict:
     
     today = datetime.now()
     dates = {
-        '2_weeks': (today - timedelta(weeks=2)).strftime('%m/%d/%Y'),
+        '2_weeks': (today - timedelta(weeks=2)).strftime('%Y-%m-%d'),
         'last_election': '11/05/2024',
         'last_general': '11/05/2024',
-        '2_years': (today - timedelta(days=730)).strftime('%m/%d/%Y'),
-        '4_years': (today - timedelta(days=1460)).strftime('%m/%d/%Y')
+        '2_years': (today - timedelta(days=730)).strftime('%Y-%m-%d'),
+        '4_years': (today - timedelta(days=1460)).strftime('%Y-%m-%d')
     }
     
     results = {}
@@ -178,11 +178,11 @@ def get_gender_new_registrations_summary(engine: Engine) -> dict:
     
     today = datetime.now()
     dates = {
-        '2_weeks': (today - timedelta(weeks=2)).strftime('%m/%d/%Y'),
+        '2_weeks': (today - timedelta(weeks=2)).strftime('%Y-%m-%d'),
         'last_election': LAST_ELECTION,
         'last_general': LAST_GENERAL,
-        '2_years': (today - timedelta(days=730)).strftime('%m/%d/%Y'),
-        '4_years': (today - timedelta(days=1460)).strftime('%m/%d/%Y')
+        '2_years': (today - timedelta(days=730)).strftime('%Y-%m-%d'),
+        '4_years': (today - timedelta(days=1460)).strftime('%Y-%m-%d')
     }
     
     results = {}
