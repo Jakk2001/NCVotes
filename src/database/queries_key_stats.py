@@ -73,8 +73,7 @@ def get_new_registrations_summary(engine: Engine) -> dict:
         SELECT COUNT(*) as total
         FROM raw.raw_voters
         WHERE status_cd IN ('A', 'I')
-          AND registr_dt ~ '^[0-9]{{2}}/[0-9]{{2}}/[0-9]{{4}}$'
-          AND TO_DATE(registr_dt, 'MM/DD/YYYY') > TO_DATE('{cutoff_date}', 'MM/DD/YYYY')
+          AND registr_dt > '{cutoff_date}'::date
         """
         
         try:
@@ -111,8 +110,7 @@ def get_party_new_registrations_summary(engine: Engine) -> dict:
         FROM raw.raw_voters
         WHERE status_cd IN ('A', 'I')
           AND party_cd IN ('DEM', 'REP', 'UNA', 'LIB', 'GRE')
-          AND registr_dt ~ '^[0-9]{{2}}/[0-9]{{2}}/[0-9]{{4}}$'
-          AND TO_DATE(registr_dt, 'MM/DD/YYYY') > TO_DATE('{cutoff_date}', 'MM/DD/YYYY')
+          AND registr_dt > '{cutoff_date}'::date
         GROUP BY party_cd
         ORDER BY party_cd;
         """
@@ -152,8 +150,7 @@ def get_age_new_registrations_summary(engine: Engine) -> dict:
         WHERE status_cd IN ('A', 'I')
           AND age_group IS NOT NULL
           AND age_group != 'Unknown'
-          AND registr_dt ~ '^[0-9]{{2}}/[0-9]{{2}}/[0-9]{{4}}$'
-          AND TO_DATE(registr_dt, 'MM/DD/YYYY') > TO_DATE('{cutoff_date}', 'MM/DD/YYYY')
+          AND registr_dt > '{cutoff_date}'::date
         GROUP BY age_group
         ORDER BY CASE age_group
                     WHEN '18-25' THEN 1
@@ -195,8 +192,7 @@ def get_gender_new_registrations_summary(engine: Engine) -> dict:
         FROM raw.raw_voters
         WHERE status_cd IN ('A', 'I')
           AND gender_code IN ('F', 'M', 'U')
-          AND registr_dt ~ '^[0-9]{{2}}/[0-9]{{2}}/[0-9]{{4}}$'
-          AND TO_DATE(registr_dt, 'MM/DD/YYYY') > TO_DATE('{cutoff_date}', 'MM/DD/YYYY')
+          AND registr_dt > '{cutoff_date}'::date
         GROUP BY gender_code
         ORDER BY gender_code;
         """

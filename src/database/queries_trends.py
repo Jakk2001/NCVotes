@@ -12,14 +12,14 @@ def get_party_trends_over_time(engine: Engine) -> pd.DataFrame:
     """Get registration trends by party over time."""
     query = """
     SELECT 
-        TO_DATE(registr_dt, 'MM/DD/YYYY') as registration_date,
+        registr_dt as registration_date,
         party_cd as party,
         COUNT(*) as total
     FROM raw.raw_voters
     WHERE status_cd IN ('A', 'I')
       AND registr_dt ~ '^[0-9]{2}/[0-9]{2}/[0-9]{4}$'
       AND party_cd IN ('DEM', 'REP', 'UNA', 'LIB', 'GRE')
-    GROUP BY TO_DATE(registr_dt, 'MM/DD/YYYY'), party_cd
+    GROUP BY registr_dt, party_cd
     ORDER BY registration_date, party_cd;
     """
     try:
@@ -34,7 +34,7 @@ def get_age_group_trends_over_time(engine: Engine) -> pd.DataFrame:
     """Get registration trends by age group over time."""
     query = """
     SELECT 
-        TO_DATE(registr_dt, 'MM/DD/YYYY') as registration_date,
+        registr_dt as registration_date,
         age_group,
         COUNT(*) as total
     FROM raw.raw_voters
@@ -42,7 +42,7 @@ def get_age_group_trends_over_time(engine: Engine) -> pd.DataFrame:
       AND registr_dt ~ '^[0-9]{2}/[0-9]{2}/[0-9]{4}$'
       AND age_group IS NOT NULL
       AND age_group != 'Unknown'
-    GROUP BY TO_DATE(registr_dt, 'MM/DD/YYYY'), age_group
+    GROUP BY registr_dt, age_group
     ORDER BY registration_date, 
              CASE age_group
                 WHEN '18-25' THEN 1
@@ -64,14 +64,14 @@ def get_gender_trends_over_time(engine: Engine) -> pd.DataFrame:
     """Get registration trends by gender over time."""
     query = """
     SELECT 
-        TO_DATE(registr_dt, 'MM/DD/YYYY') as registration_date,
+        registr_dt as registration_date,
         gender_code as gender,
         COUNT(*) as total
     FROM raw.raw_voters
     WHERE status_cd IN ('A', 'I')
       AND registr_dt ~ '^[0-9]{2}/[0-9]{2}/[0-9]{4}$'
       AND gender_code IN ('M', 'F', 'U')
-    GROUP BY TO_DATE(registr_dt, 'MM/DD/YYYY'), gender_code
+    GROUP BY registr_dt, gender_code
     ORDER BY registration_date, gender_code;
     """
     try:
@@ -86,14 +86,14 @@ def get_race_trends_over_time(engine: Engine) -> pd.DataFrame:
     """Get registration trends by race over time."""
     query = """
     SELECT 
-        TO_DATE(registr_dt, 'MM/DD/YYYY') as registration_date,
+        registr_dt as registration_date,
         race_code as race,
         COUNT(*) as total
     FROM raw.raw_voters
     WHERE status_cd IN ('A', 'I')
       AND registr_dt ~ '^[0-9]{2}/[0-9]{2}/[0-9]{4}$'
       AND race_code IN ('W', 'B', 'A', 'I', 'M', 'O', 'U')
-    GROUP BY TO_DATE(registr_dt, 'MM/DD/YYYY'), race_code
+    GROUP BY registr_dt, race_code
     ORDER BY registration_date, race_code;
     """
     try:
@@ -108,12 +108,12 @@ def get_weekly_registration_counts(engine: Engine) -> pd.DataFrame:
     """Get weekly registration counts for seasonal pattern analysis."""
     query = """
     SELECT 
-        DATE_TRUNC('week', TO_DATE(registr_dt, 'MM/DD/YYYY'))::date as week_start,
+        DATE_TRUNC('week', registr_dt)::date as week_start,
         COUNT(*) as total
     FROM raw.raw_voters
     WHERE status_cd IN ('A', 'I')
       AND registr_dt ~ '^[0-9]{2}/[0-9]{2}/[0-9]{4}$'
-    GROUP BY DATE_TRUNC('week', TO_DATE(registr_dt, 'MM/DD/YYYY'))::date
+    GROUP BY DATE_TRUNC('week', registr_dt)::date
     ORDER BY week_start;
     """
     try:
@@ -129,12 +129,12 @@ def get_cumulative_registration(engine: Engine) -> pd.DataFrame:
     query = """
     WITH daily_counts AS (
         SELECT 
-            TO_DATE(registr_dt, 'MM/DD/YYYY') as registration_date,
+            registr_dt as registration_date,
             COUNT(*) as daily_total
         FROM raw.raw_voters
         WHERE status_cd IN ('A', 'I')
           AND registr_dt ~ '^[0-9]{2}/[0-9]{2}/[0-9]{4}$'
-        GROUP BY TO_DATE(registr_dt, 'MM/DD/YYYY')
+        GROUP BY registr_dt
     )
     SELECT 
         registration_date,
